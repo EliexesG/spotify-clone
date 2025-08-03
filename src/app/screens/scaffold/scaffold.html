@@ -1,0 +1,20 @@
+<main class="w-full h-screen flex flex-col p-2 gap-2">
+  <!-- * Header Section -->
+  <header class="w-full h-20">Header</header>
+  <body class="w-full grow grid grid-cols-5 gap-2">
+    <!-- * Playlist Section -->
+    <aside class="col-span-1 rounded-2xl bg-blue-950">Playlist</aside>
+    <!-- * Main Content Section -->
+    <section class="col-span-3 rounded-2xl bg-blue-950">
+      <h1>Welcome to the Scaffold Page</h1>
+      <router-outlet></router-outlet>
+    </section>
+    <!-- * Reproduction List Section -->
+    <aside class="col-span-1 rounded-2xl bg-blue-950">Reproduction List</aside>
+  </body>
+
+  <!-- * Reproduction Controllers Section -->
+  <section class="w-full h-20">
+    <app-reproduction-controller></app-reproduction-controller>
+  </section>
+</main>

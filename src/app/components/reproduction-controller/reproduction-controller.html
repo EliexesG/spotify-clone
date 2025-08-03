@@ -1,0 +1,71 @@
+@let buttonClass =
+  "text-white cursor-pointer hover:scale-110 transition-transform";
+@let mainButtonClass =
+  "text-white cursor-pointer hover:scale-[210%] transition-transform scale-200";
+
+<div class="flex justify-between items-center h-full">
+  <!-- * Music Displayer -->
+  <section class="flex items-center gap-3 justify-start w-96">
+    <img
+      [src]="musicSource().img"
+      alt="Music Cover"
+      class="w-16 h-16 rounded"
+    />
+    <div>
+      <p class="font-bold text-sm">{{ musicSource().title }}</p>
+      <p class="font-light text-gray-300 text-xs">{{ musicSource().artist }}</p>
+    </div>
+    <i class="pi pi-minus-circle"></i>
+    <i class="pi pi-plus-circle"></i>
+  </section>
+  <!-- * Playback Controls -->
+  <section class="flex flex-col justify-center grow">
+    <div class="flex items-center gap-6 justify-center mb-4">
+      <i [ngClass]="['pi pi-replay', buttonClass]"></i>
+      <i [ngClass]="['pi pi-step-backward', buttonClass]"></i>
+
+      @if (!isMusicPlaying()) {
+        <i
+          (click)="playMusic()"
+          [ngClass]="['pi pi-play-circle', mainButtonClass]"
+        ></i>
+      } @else {
+        <i
+          (click)="pauseMusic()"
+          [ngClass]="['pi pi-pause-circle', mainButtonClass]"
+        ></i>
+      }
+
+      <i [ngClass]="['pi pi-step-forward', buttonClass]"></i>
+      <i [ngClass]="['pi pi-replay', buttonClass]"></i>
+    </div>
+    <div class="flex items-center gap-4 justify-center w-full">
+      <p class="m-0 text-xs font-light">{{ currentTimeString() }}</p>
+      <p-slider
+        [min]="0"
+        [max]="musicSource().duration"
+        [step]="1"
+        [(ngModel)]="currentTime"
+        styleClass="w-full"
+      ></p-slider>
+      <p class="m-0 text-xs font-light">{{ durationString() }}</p>
+    </div>
+  </section>
+  <!-- * Volume and Settings -->
+  <section class="w-96 flex justify-end items-center gap-4">
+    <i [ngClass]="['pi pi-mobile', buttonClass]"></i>
+    <i [ngClass]="['pi pi-microphone', buttonClass]"></i>
+    <i [ngClass]="['pi pi-bars', buttonClass]"></i>
+    <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
+    <i [ngClass]="[volumeIcon(), buttonClass]"></i>
+    <p-slider
+      min="0"
+      max="1"
+      [step]="0.1"
+      [(ngModel)]="volume"
+      styleClass="w-20"
+    ></p-slider>
+    <i [ngClass]="['pi pi-window-maximize', buttonClass]"></i>
+    <i [ngClass]="['pi pi-expand', buttonClass]"></i>
+  </section>
+</div>
