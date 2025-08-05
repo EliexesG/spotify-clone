@@ -1,8 +1,16 @@
-import { Component, input, output } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
+import { HighlightSlider } from '../../directives/highlight-slider';
 
 @Component({
   selector: 'app-slider',
-  imports: [],
+  imports: [HighlightSlider],
   host: { class: 'w-full' },
   templateUrl: './slider.html',
   styleUrl: './slider.scss',
@@ -28,7 +36,6 @@ export class Slider {
    */
   changed(event: Event) {
     const value = (event.target as HTMLInputElement).valueAsNumber;
-    console.log("🚀 ~ Slider ~ changed ~ value:", value)
     this.valueChanged.emit(value);
   }
 }
