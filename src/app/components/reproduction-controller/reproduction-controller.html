@@ -1,71 +1,102 @@
+@let mainButtonClass = "scale-200! hover:scale-[210%]! disabled:scale-200!";
 @let buttonClass =
-  "text-white cursor-pointer hover:scale-110 transition-transform";
-@let mainButtonClass =
-  "text-white cursor-pointer hover:scale-[210%] transition-transform scale-200";
+  "text-white disabled:text-gray-500 transition-transform cursor-pointer hover:scale-110 " +
+  "disabled:cursor-not-allowed disabled:scale-100 border-none outline-none bg-transparent";
 
-<div class="flex justify-between items-center h-full">
+<section class="flex items-center gap-3 justify-start w-96">
   <!-- * Music Displayer -->
-  <section class="flex items-center gap-3 justify-start w-96">
-    <img
-      [src]="musicSource().img"
-      alt="Music Cover"
-      class="w-16 h-16 rounded"
-    />
+  @let musicSource = this.musicSource();
+
+  @if (musicSource) {
+    <img [src]="musicSource.img" alt="Music Cover" class="w-16 h-16 rounded" />
     <div>
-      <p class="font-bold text-sm">{{ musicSource().title }}</p>
-      <p class="font-light text-gray-300 text-xs">{{ musicSource().artist }}</p>
+      <p class="font-bold text-sm">{{ musicSource.title }}</p>
+      <p class="font-light text-gray-300 text-xs">{{ musicSource.artist }}</p>
     </div>
     <i class="pi pi-minus-circle"></i>
     <i class="pi pi-plus-circle"></i>
-  </section>
-  <!-- * Playback Controls -->
-  <section class="flex flex-col justify-center grow">
-    <div class="flex items-center gap-6 justify-center mb-4">
-      <i [ngClass]="['pi pi-replay', buttonClass]"></i>
-      <i [ngClass]="['pi pi-step-backward', buttonClass]"></i>
+  }
+</section>
 
-      @if (!isMusicPlaying()) {
-        <i
-          (click)="playMusic()"
-          [ngClass]="['pi pi-play-circle', mainButtonClass]"
-        ></i>
-      } @else {
-        <i
-          (click)="pauseMusic()"
-          [ngClass]="['pi pi-pause-circle', mainButtonClass]"
-        ></i>
-      }
+<!-- * Playback Controls -->
+<section class="flex flex-col justify-center grow">
+  <div class="flex items-center gap-6 justify-center mb-4">
+    <button
+      [disabled]="disableReproductionControls()"
+      [ngClass]="[buttonClass]"
+    >
+      <i class="pi pi-replay"></i>
+    </button>
+    <button
+      [disabled]="disableReproductionControls() || disableJumpToPrevious()"
+      [ngClass]="[buttonClass]"
+      (click)="musicPlayer.jumpToPrevious()"
+    >
+      <i class="pi pi-step-backward"></i>
+    </button>
 
-      <i [ngClass]="['pi pi-step-forward', buttonClass]"></i>
-      <i [ngClass]="['pi pi-replay', buttonClass]"></i>
-    </div>
-    <div class="flex items-center gap-4 justify-center w-full">
-      <p class="m-0 text-xs font-light">{{ currentTimeString() }}</p>
-      <p-slider
-        [min]="0"
-        [max]="musicSource().duration"
-        [step]="1"
-        [(ngModel)]="currentTime"
-        styleClass="w-full"
-      ></p-slider>
-      <p class="m-0 text-xs font-light">{{ durationString() }}</p>
-    </div>
-  </section>
-  <!-- * Volume and Settings -->
-  <section class="w-96 flex justify-end items-center gap-4">
-    <i [ngClass]="['pi pi-mobile', buttonClass]"></i>
-    <i [ngClass]="['pi pi-microphone', buttonClass]"></i>
-    <i [ngClass]="['pi pi-bars', buttonClass]"></i>
-    <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
-    <i [ngClass]="[volumeIcon(), buttonClass]"></i>
-    <p-slider
-      min="0"
-      max="1"
-      [step]="0.1"
-      [(ngModel)]="volume"
-      styleClass="w-20"
-    ></p-slider>
-    <i [ngClass]="['pi pi-window-maximize', buttonClass]"></i>
-    <i [ngClass]="['pi pi-expand', buttonClass]"></i>
-  </section>
-</div>
+    @if (!isMusicPlaying()) {
+      <button
+        [disabled]="disableReproductionControls()"
+        [ngClass]="[buttonClass, mainButtonClass]"
+        (click)="musicPlayer.playMusic()"
+      >
+        <i class="pi pi-play-circle"></i>
+      </button>
+    } @else {
+      <button
+        [disabled]="disableReproductionControls()"
+        [ngClass]="[buttonClass, mainButtonClass]"
+        (click)="musicPlayer.pauseMusic()"
+      >
+        <i class="pi pi-pause-circle"></i>
+      </button>
+    }
+
+    <button
+      [disabled]="disableReproductionControls() || disableJumpToNext()"
+      [ngClass]="[buttonClass]"
+      (click)="musicPlayer.jumpToNext()"
+    >
+      <i class="pi pi-step-forward"></i>
+    </button>
+    <button
+      [disabled]="disableReproductionControls()"
+      [ngClass]="[buttonClass]"
+      (click)="musicPlayer.restartMusic()"
+    >
+      <i class="pi pi-replay"></i>
+    </button>
+  </div>
+  <div class="flex items-center gap-4 justify-center w-full">
+    <p class="m-0 text-xs font-light">{{ currentTimeString() }}</p>
+    <app-slider
+      type="range"
+      [min]="0"
+      [max]="duration()"
+      [value]="currentTime().currentTime"
+      [disabled]="disableReproductionControls()"
+      (valueChanged)="musicPlayer.changeCurrentTime($event)"
+    />
+    <p class="m-0 text-xs font-light">{{ durationString() }}</p>
+  </div>
+</section>
+
+<!-- * Volume and Settings -->
+<section class="flex justify-end items-center gap-4 w-96">
+  <i [ngClass]="['pi pi-mobile', buttonClass]"></i>
+  <i [ngClass]="['pi pi-microphone', buttonClass]"></i>
+  <i [ngClass]="['pi pi-bars', buttonClass]"></i>
+  <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
+  <i [ngClass]="[volumeIcon(), buttonClass]"></i>
+  <app-slider
+    [min]="0"
+    [max]="1"
+    [value]="volume()"
+    [step]="0.1"
+    class="w-20!"
+    (valueChanged)="musicPlayer.changeVolume($event)"
+  ></app-slider>
+  <i [ngClass]="['pi pi-window-maximize', buttonClass]"></i>
+  <i [ngClass]="['pi pi-expand', buttonClass]"></i>
+</section>

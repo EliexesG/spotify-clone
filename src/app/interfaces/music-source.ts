@@ -1,6 +1,7 @@
 export interface MusicSource {
+  id: string;
   img: string;
   title: string;
   artist: string;
-  duration?: number; // Total duration of the track in seconds
+  url: string;
 }

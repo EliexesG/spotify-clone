@@ -1,99 +1,107 @@
-import { computed, Injectable, Signal, signal } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  Signal,
+  signal,
+} from '@angular/core';
 import { MusicSource } from '../interfaces/music-source';
+import { AudioResolver } from './audio-resolver';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MusicPlayer {
-  // * Signals
-  private readonly _isMusicPlaying = signal(false);
-  private readonly _volume = signal(0); // Volume level from 0 to 1
-  private readonly _currentTime = signal(0);
+  //#region Services
+  private readonly _audioResolver = inject(AudioResolver);
+  //#endregion
+
+  //#region Music state
+  isMusicPlaying = this._audioResolver.audioReproducing;
+  volume = this._audioResolver.audioVolume;
+  duration = this._audioResolver.audioDuration;
+  currentTime = this._audioResolver.audioCurrentTime;
+  //#endregion
 
   // Default music source or current music source
-  private readonly _musicSource = signal<MusicSource>({
-    img: 'https://cdn.shopify.com/s/files/1/0657/3100/2634/files/papierpeintmusique-casqueaudio.png?v=1715586351',
-    title: 'Default Title',
-    artist: 'EliexesG',
-    duration: 180, // Default duration in seconds
-  });
+  private readonly _musicSource = signal<MusicSource | null>(null);
 
-  // * Computed
-  private readonly _currentTimeString = computed(() =>
-    this.formatTime(this._currentTime()),
+  //#region Computed
+  durationString = computed(() => this.formatTime(this.duration()));
+  currentTimeString = computed(() =>
+    this.formatTime(this.currentTime().currentTime),
   );
-
-  private readonly _durationString = computed(() =>
-    this.formatTime(this._musicSource().duration),
-  );
+  //#endregion
 
   //#region Getters
-  get isMusicPlaying(): Signal<boolean> {
-    return this._isMusicPlaying.asReadonly();
-  }
-
-  get musicSource(): Signal<MusicSource> {
+  get musicSource(): Signal<MusicSource | null> {
     return this._musicSource.asReadonly();
-  }
-
-  get currentTime(): Signal<number> {
-    return this._currentTime.asReadonly();
-  }
-
-  get volume(): Signal<number> {
-    return this._volume.asReadonly();
-  }
-
-  get currentTimeString(): Signal<string> {
-    return this._currentTimeString;
-  }
-
-  get durationString(): Signal<string> {
-    return this._durationString;
   }
   //#endregion
 
   //#region Music Control Methods
+
   playMusic() {
-    this._isMusicPlaying.set(true);
-  }
-
-  changeCurrentTime(time: number) {
-    if (time < 0 || time > (this._musicSource()?.duration || 0)) {
-      throw new Error('Time must be between 0 and music duration');
-    }
-
-    this._currentTime.set(time);
-  }
-
-  changeVolume(volume: number) {
-    if (volume < 0 || volume > 1) {
-      throw new Error('Volume must be between 0 and 1');
-    }
-
-    this._volume.set(volume);
+    this._audioResolver.reproduceAudio();
   }
 
   pauseMusic() {
-    this._isMusicPlaying.set(false);
+    this._audioResolver.pauseAudio();
   }
 
   stopMusic() {
-    this._isMusicPlaying.set(false);
+    this._audioResolver.stopAudio();
+  }
+
+  restartMusic() {
+    this._audioResolver.restartAudio();
+  }
+
+  changeCurrentTime(seconds: number) {
+    this._audioResolver.changeAudioCurrentTime(seconds);
+  }
+
+  changeVolume(volume: number) {
+    this._audioResolver.changeAudioVolume(volume);
   }
 
   jumpToNext() {}
 
   jumpToPrevious() {}
 
-  restartMusic() {}
+  /**
+   * Changes the current music source.
+   *
+   * This function updates the internal music source signal with the provided
+   * music object. If the provided music is null, the function returns early.
+   * Otherwise, it stops any currently playing music before setting the new source.
+   *
+   * @param music - The new music source to be set, or null to clear the current source.
+   */
+  changeMusicSource(music: MusicSource | null) {
+    this._musicSource.set(music);
+    const currentMusic = this._musicSource();
+
+    if (!currentMusic) return;
+
+    this._audioResolver.setAudio(currentMusic.url);
+    this.stopMusic();
+  }
   //#endregion
 
+  /**
+   * Formats a given time in seconds to a string in the format mm:ss.
+   * If the given time is undefined, it returns '00:00'.
+   * @param seconds - The time in seconds to be formatted.
+   * @returns A string in the format mm:ss.
+   */
   private formatTime(seconds: number | undefined): string {
     if (!seconds) return '00:00';
 
     const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.round(seconds % 60);
+
     return `${minutes.toString().padStart(2, '0')}:${secs
       .toString()
       .padStart(2, '0')}`;

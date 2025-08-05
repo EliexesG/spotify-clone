@@ -12,10 +12,6 @@ import {
 } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 
-// PrimeNG imports
-import { providePrimeNG } from 'primeng/config';
-import aura from '@primeuix/themes/aura';
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -23,13 +19,5 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
-    providePrimeNG({
-      theme: {
-        preset: aura,
-        options: {
-          dark: true,
-        },
-      },
-    }),
   ],
 };
