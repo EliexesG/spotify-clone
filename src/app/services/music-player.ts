@@ -41,7 +41,6 @@ export class MusicPlayer {
   //#endregion
 
   //#region Music Control Methods
-
   playMusic() {
     this._audioResolver.reproduceAudio();
   }

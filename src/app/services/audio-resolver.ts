@@ -133,7 +133,7 @@ export class AudioResolver {
       };
 
       audio.oncanplay = () => {
-        this._audioDuration.set(audio.duration);
+        this._audioDuration.set(Math.round(audio.duration));
       };
     });
   }
