@@ -7,7 +7,7 @@ import { Slider } from '../slider/slider';
 @Component({
   selector: 'app-reproduction-controller',
   imports: [CommonModule, FormsModule, Slider],
-  host: { class: 'flex justify-between items-center h-full w-full' },
+  host: { class: 'flex items-center h-full w-full p-4' },
   templateUrl: './reproduction-controller.html',
   styleUrl: './reproduction-controller.scss',
 })
