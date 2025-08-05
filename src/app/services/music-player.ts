@@ -1,11 +1,4 @@
-import {
-  computed,
-  effect,
-  inject,
-  Injectable,
-  Signal,
-  signal,
-} from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { MusicSource } from '../interfaces/music-source';
 import { AudioResolver } from './audio-resolver';
 
@@ -64,10 +57,6 @@ export class MusicPlayer {
   changeVolume(volume: number) {
     this._audioResolver.changeAudioVolume(volume);
   }
-
-  jumpToNext() {}
-
-  jumpToPrevious() {}
 
   /**
    * Changes the current music source.

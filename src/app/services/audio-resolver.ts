@@ -147,6 +147,9 @@ export class AudioResolver {
    * @param url - The URL of the audio file to be set as the source.
    */
   setAudio(url: string) {
+    // destroy previous one
+    this._audio.getValue()?.pause();
+    this._audio.getValue()?.remove();
     this._audio.next(new Audio(url));
   }
 

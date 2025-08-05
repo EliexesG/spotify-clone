@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ReproductionController } from '../../components/reproduction-controller/reproduction-controller';
-import { CrudMusic } from '../../services/crud-music';
-import { MusicPlayer } from '../../services/music-player';
+import { PlaylistPlayer } from '../../services/playlist-player';
+import { CrudPlaylist } from '../../services/crud-playlist';
 
 @Component({
   selector: 'app-scaffold',
@@ -11,12 +11,12 @@ import { MusicPlayer } from '../../services/music-player';
   styleUrl: './scaffold.scss',
 })
 export class Scaffold {
-  private readonly _crudMusic = inject(CrudMusic);
-  private readonly _musicPlayer = inject(MusicPlayer);
+  private readonly _crudPlaylist = inject(CrudPlaylist);
+  private readonly _playlistPlayer = inject(PlaylistPlayer);
 
   constructor() {
-    this._musicPlayer.changeMusicSource(
-      this._crudMusic.getMusicById('1') || null,
+    this._playlistPlayer.changePlaylistSource(
+      this._crudPlaylist.getPlaylistById('2') || null,
     );
   }
 }

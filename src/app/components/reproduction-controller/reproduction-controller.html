@@ -29,9 +29,9 @@
       <i class="pi pi-replay"></i>
     </button>
     <button
-      [disabled]="disableReproductionControls() || disableJumpToPrevious()"
+      [disabled]="disableJumpToPrevious()"
       [ngClass]="[buttonClass]"
-      (click)="musicPlayer.jumpToPrevious()"
+      (click)="playlistPlayer.playPreviousMusic()"
     >
       <i class="pi pi-step-backward"></i>
     </button>
@@ -55,9 +55,9 @@
     }
 
     <button
-      [disabled]="disableReproductionControls() || disableJumpToNext()"
+      [disabled]="disableJumpToNext()"
       [ngClass]="[buttonClass]"
-      (click)="musicPlayer.jumpToNext()"
+      (click)="playlistPlayer.playNextMusic()"
     >
       <i class="pi pi-step-forward"></i>
     </button>

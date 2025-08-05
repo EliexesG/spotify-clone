@@ -3,6 +3,7 @@ import { MusicPlayer } from '../../services/music-player';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Slider } from '../slider/slider';
+import { PlaylistPlayer } from '../../services/playlist-player';
 
 @Component({
   selector: 'app-reproduction-controller',
@@ -14,6 +15,7 @@ import { Slider } from '../slider/slider';
 export class ReproductionController {
   // * Services
   protected readonly musicPlayer = inject(MusicPlayer);
+  protected readonly playlistPlayer = inject(PlaylistPlayer);
 
   // * Signals
   protected readonly musicSource = this.musicPlayer.musicSource;
@@ -26,8 +28,18 @@ export class ReproductionController {
 
   // * Computed
   disableReproductionControls = computed(() => !this.musicSource());
-  disableJumpToPrevious = computed(() => !this.musicSource());
-  disableJumpToNext = computed(() => !this.musicSource());
+
+  disableJumpToPrevious = computed(() => {
+    return (
+      this.disableReproductionControls() ||
+      !this.playlistPlayer.hasPreviousMusic()
+    );
+  });
+  disableJumpToNext = computed(() => {
+    return (
+      this.disableReproductionControls() || !this.playlistPlayer.hasNextMusic()
+    );
+  });
 
   volumeIcon = computed(() => {
     const volume = this.volume();

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "name": "Music I love",
+    "description": "Best music ever",
+    "owner": "EliexesG",
+    "img": "https://cdn2.suno.ai/image_large_3880b9af-996c-426f-9af1-a8fe3d793322.jpeg",
+    "music": ["1", "2"]
+  },
+  {
+    "id": "2",
+    "name": "Music I like",
+    "description": "Best music ever",
+    "owner": "EliexesG",
+    "img": "https://cdn2.suno.ai/image_large_75401805-4595-43f1-a9e6-d0b59956f127.jpeg",
+    "music": ["2", "1"]
+  }
+]
