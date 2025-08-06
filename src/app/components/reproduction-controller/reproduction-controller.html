@@ -1,7 +1,9 @@
 @let mainButtonClass = "scale-200! hover:scale-[210%]! disabled:scale-200!";
 @let buttonClass =
-  "text-white disabled:text-gray-500 transition-transform cursor-pointer hover:scale-110 " +
+  "text-white disabled:text-gray-500 transition-all cursor-pointer hover:scale-110 " +
   "disabled:cursor-not-allowed disabled:scale-100 border-none outline-none bg-transparent";
+@let activeButtonClass =
+  "bg-[var(--primary)] w-[5px] h-[5px] rounded-full absolute bottom-[-5px] right-[50%] translate-[50%]";
 
 <!-- * Music Displayer -->
 <section class="flex items-center gap-3 justify-start w-80">
@@ -23,13 +25,22 @@
 <section class="flex flex-col justify-center grow">
   <div class="flex items-center gap-6 justify-center mb-2">
     <button
-      [disabled]="disableReproductionControls()"
+      (click)="playlistPlayer.toggleShuffle()"
+      [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
+      class="relative"
     >
-      <i class="pi pi-replay"></i>
+      <i
+        class="pi pi-arrow-right-arrow-left"
+        [ngClass]="{ 'text-[var(--primary)]': isShuffle() }"
+      ></i>
+
+      @if (isShuffle()) {
+        <div [ngClass]="[activeButtonClass]"></div>
+      }
     </button>
     <button
-      [disabled]="disableJumpToPrevious()"
+      [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       (click)="playlistPlayer.playPreviousMusic()"
     >
@@ -55,14 +66,14 @@
     }
 
     <button
-      [disabled]="disableJumpToNext()"
+      [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       (click)="playlistPlayer.playNextMusic()"
     >
       <i class="pi pi-step-forward"></i>
     </button>
     <button
-      [disabled]="disableReproductionControls()"
+      [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       (click)="musicPlayer.restartMusic()"
     >

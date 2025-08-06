@@ -17,27 +17,21 @@ export class ReproductionController {
   protected readonly musicPlayer = inject(MusicPlayer);
   protected readonly playlistPlayer = inject(PlaylistPlayer);
 
-  // * Signals
-  protected readonly musicSource = this.musicPlayer.musicSource;
-  protected readonly isMusicPlaying = this.musicPlayer.isMusicPlaying;
-  protected readonly volume = this.musicPlayer.volume;
-  protected readonly duration = this.musicPlayer.duration;
-  protected readonly currentTime = this.musicPlayer.currentTime;
-  protected readonly currentTimeString = this.musicPlayer.currentTimeString;
-  protected readonly durationString = this.musicPlayer.durationString;
+  //#region Music states
+  musicSource = this.musicPlayer.musicSource;
+  isMusicPlaying = this.musicPlayer.isMusicPlaying;
+  volume = this.musicPlayer.volume;
+  duration = this.musicPlayer.duration;
+  currentTime = this.musicPlayer.currentTime;
+  currentTimeString = this.musicPlayer.currentTimeString;
+  durationString = this.musicPlayer.durationString;
+  isShuffle = this.playlistPlayer.isShuffle;
+  //#endregion
 
   //#region Computed
   disableReproductionControls = computed(() => !this.musicSource());
-
-  // Disable next and previous selects
-  disableJumpToPrevious = computed(
-    () =>
-      !this.playlistPlayer.hasPreviousMusic() ||
-      this.disableReproductionControls(),
-  );
-  disableJumpToNext = computed(
-    () =>
-      !this.playlistPlayer.hasNextMusic() || this.disableReproductionControls(),
+  disablePlaylistControls = computed(
+    () => !this.playlistPlayer.playlistSource(),
   );
   //#endregion
 

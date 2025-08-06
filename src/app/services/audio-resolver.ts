@@ -150,6 +150,7 @@ export class AudioResolver {
     // destroy previous one
     this._audio.getValue()?.pause();
     this._audio.getValue()?.remove();
+    this._audio.next(null);
     this._audio.next(new Audio(url));
   }
 

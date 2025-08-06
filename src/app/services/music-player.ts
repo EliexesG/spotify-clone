@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { MusicSource } from '../interfaces/music-source';
 import { AudioResolver } from './audio-resolver';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -21,10 +22,12 @@ export class MusicPlayer {
   private readonly _musicSource = signal<MusicSource | null>(null);
 
   //#region Computed
-  durationString = computed(() => this.formatTime(this.duration()));
-  currentTimeString = computed(() =>
-    this.formatTime(this.currentTime().currentTime),
-  );
+  durationString = computed(() => {
+    return this.formatTime(this.duration());
+  });
+  currentTimeString = computed(() => {
+    return this.formatTime(this.currentTime().currentTime);
+  });
   //#endregion
 
   //#region Getters
