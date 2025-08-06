@@ -12,5 +12,12 @@
     "title": "Yeshua",
     "artist": "EliexesG",
     "url": "songs/yeshua.wav"
+  },
+  {
+    "id": "3",
+    "img": "https://cdn2.suno.ai/image_large_e28e3489-bcc1-4132-ba37-d98f90914d2b.jpeg",
+    "title": "¿Por qué?",
+    "artist": "EliexesG",
+    "url": "songs/por_que.wav"
   }
 ]
