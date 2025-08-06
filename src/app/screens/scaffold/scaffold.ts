@@ -16,7 +16,7 @@ export class Scaffold {
 
   constructor() {
     this._playlistPlayer.changePlaylistSource(
-      this._crudPlaylist.getPlaylistById('2') || null,
+      this._crudPlaylist.getPlaylistById('1') || null,
     );
   }
 }

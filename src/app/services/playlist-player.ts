@@ -1,11 +1,4 @@
-import {
-  computed,
-  effect,
-  inject,
-  Injectable,
-  Signal,
-  signal,
-} from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { PlaylistSource } from '../interfaces/playlist-source';
 import { MusicPlayer } from './music-player';
 
@@ -20,17 +13,16 @@ export class PlaylistPlayer {
   private readonly _playlistSource = signal<PlaylistSource | null>(null);
 
   //#region Computed
-  currentMusicPlaying = computed(() => {
+  currentMusicSource = computed(() => {
     const musicSource = this._musicPlayer.musicSource();
-    const isMusicPlaying = this._musicPlayer.isMusicPlaying();
 
-    if (isMusicPlaying && musicSource) return musicSource;
+    if (musicSource) return musicSource;
     else return null;
   });
 
   currentMusicIndex = computed(() => {
     const playlist = this._playlistSource();
-    const currentMusic = this.currentMusicPlaying();
+    const currentMusic = this.currentMusicSource();
 
     if (!playlist || !currentMusic) return 0;
 
@@ -38,12 +30,22 @@ export class PlaylistPlayer {
   });
 
   hasNextMusic = computed(() => {
-    return (
-      this.currentMusicIndex() < (this.playlistSource()?.music?.length || 0) - 1
-    );
+    const playlist = this.playlistSource();
+    const currentMusicIndex = this.currentMusicIndex();
+
+    if (!playlist || currentMusicIndex === -1) return false;
+
+    return currentMusicIndex < playlist.music.length - 1;
   });
 
-  hasPreviousMusic = computed(() => this.currentMusicIndex() > 0);
+  hasPreviousMusic = computed(() => {
+    const playlist = this.playlistSource();
+    const currentMusicIndex = this.currentMusicIndex();
+
+    if (!playlist || currentMusicIndex === -1) return false;
+
+    return currentMusicIndex > 0;
+  });
   //#endregion
 
   //#region Getters

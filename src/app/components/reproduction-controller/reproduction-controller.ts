@@ -26,20 +26,20 @@ export class ReproductionController {
   protected readonly currentTimeString = this.musicPlayer.currentTimeString;
   protected readonly durationString = this.musicPlayer.durationString;
 
-  // * Computed
+  //#region Computed
   disableReproductionControls = computed(() => !this.musicSource());
 
-  disableJumpToPrevious = computed(() => {
-    return (
-      this.disableReproductionControls() ||
-      !this.playlistPlayer.hasPreviousMusic()
-    );
-  });
-  disableJumpToNext = computed(() => {
-    return (
-      this.disableReproductionControls() || !this.playlistPlayer.hasNextMusic()
-    );
-  });
+  // Disable next and previous selects
+  disableJumpToPrevious = computed(
+    () =>
+      !this.playlistPlayer.hasPreviousMusic() ||
+      this.disableReproductionControls(),
+  );
+  disableJumpToNext = computed(
+    () =>
+      !this.playlistPlayer.hasNextMusic() || this.disableReproductionControls(),
+  );
+  //#endregion
 
   volumeIcon = computed(() => {
     const volume = this.volume();
