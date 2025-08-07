@@ -6,7 +6,7 @@ import {
   Signal,
   signal,
 } from '@angular/core';
-import { currentTime } from '../interfaces/current-time';
+import { CurrentTime } from '../interfaces/current-time';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -21,7 +21,7 @@ export class AudioResolver {
   private readonly _audioReproducing = signal(false);
   private readonly _audioVolume = signal(0.5);
   private readonly _audioDuration = signal(0);
-  private readonly _audioCurrentTime = signal<currentTime>({
+  private readonly _audioCurrentTime = signal<CurrentTime>({
     currentTime: 0,
     cause: 'reproduction',
   });
@@ -44,7 +44,7 @@ export class AudioResolver {
     return this._audioDuration.asReadonly();
   }
 
-  get audioCurrentTime(): Signal<currentTime> {
+  get audioCurrentTime(): Signal<CurrentTime> {
     return this._audioCurrentTime.asReadonly();
   }
   //#endregion

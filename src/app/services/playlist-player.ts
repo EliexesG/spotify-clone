@@ -136,8 +136,8 @@ export class PlaylistPlayer {
    */
   changePlaylistSource(
     playlist: PlaylistSource | null,
-    musicId = '',
     play = false,
+    musicId = '',
   ) {
     this._playlistSource.set(playlist);
 
