@@ -1,0 +1,27 @@
+<section
+  class="flex flex-col w-full h-full rounded-2xl bg-[var(--secondary)] p-4"
+  [ngClass]="{ 'w-20': expanded() }"
+>
+  <section
+    (click)="toggleExpanded()"
+    class="flex items-center justify-start w-full h-10 shadow ps-2 cursor-pointer"
+    [ngClass]="{ 'justify-center!': !expanded() }"
+  >
+    <i class="text-white pi pi-bars"></i>
+
+    @if (expanded()) {
+      <p class="font-bold ms-2 text-white">Your library</p>
+    }
+  </section>
+  <section
+    class="w-full grow overflow-y-scroll flex flex-col justify-start align-middle"
+  >
+    @for (playlist of filteredPlaylists(); track $index) {
+      <app-library-card
+        [background]="false"
+        [source]="playlist"
+        [variant]="expanded() ? 'with-description' : 'only-img'"
+      ></app-library-card>
+    }
+  </section>
+</section>

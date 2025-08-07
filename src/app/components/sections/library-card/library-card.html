@@ -1,0 +1,52 @@
+@let cardClass =
+  "flex items-center pt-2 pb-2 ps-1.5 pe-1.5 rounded-md cursor-pointer";
+@let playButtonClass =
+  "pi absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
+
+<ng-template #imgTemplate>
+  <div
+    class="w-14 h-14 relative"
+    (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
+  >
+    <img
+      [src]="img()"
+      alt="Music Cover"
+      class="w-full h-full object-cover"
+      [ngClass]="{ 'opacity-[0.5]': hover() }"
+    />
+    <i
+      [hidden]="!hover()"
+      [class]="playButtonClass"
+      [ngClass]="{ 'pi-play': !isPlaying(), 'pi-pause': isPlaying() }"
+    ></i>
+  </div>
+</ng-template>
+
+@if (variant() === "only-img") {
+  <div
+    #card
+    [class]="cardClass + ' justify-center w-fit'"
+    [ngClass]="{ 'bg-[var(--highlight)]': hover() }"
+  >
+    <ng-component [ngTemplateOutlet]="imgTemplate"></ng-component>
+  </div>
+} @else if (variant() === "with-description") {
+  <div
+    #card
+    [class]="cardClass + ' justify-start w-full'"
+    [ngClass]="{ 'bg-[var(--highlight)]': hover() }"
+  >
+    <ng-component class="" [ngTemplateOutlet]="imgTemplate"></ng-component>
+    <div class="ms-3">
+      <p
+        class="font-bold text-sm"
+        [ngClass]="{ 'text-[var(--primary)]': isPlaying() }"
+      >
+        {{ title() }}
+      </p>
+      <p class="font-light text-gray-300 text-xs">{{ subtitle() }}</p>
+    </div>
+  </div>
+} @else {
+  <div></div>
+}
