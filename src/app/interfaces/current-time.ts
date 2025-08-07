@@ -1,4 +1,4 @@
-export interface currentTime {
+export interface CurrentTime {
   currentTime: number;
   cause: currentTimeCause;
 }
