@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ReproductionController } from '../../components/reproduction-controller/reproduction-controller';
+import { ReproductionController } from '../../components/reproduction/reproduction-controller/reproduction-controller';
 import { PlaylistPlayer } from '../../services/playlist-player';
 import { CrudPlaylist } from '../../services/crud-playlist';
+import { LibrarySection } from '../../components/sections/library-section/library-section';
 
 @Component({
   selector: 'app-scaffold',
-  imports: [RouterOutlet, ReproductionController],
+  imports: [RouterOutlet, ReproductionController, LibrarySection],
   templateUrl: './scaffold.html',
   styleUrl: './scaffold.scss',
 })
