@@ -1,21 +1,14 @@
-import {
-  Component,
-  effect,
-  ElementRef,
-  input,
-  output,
-  viewChild,
-} from '@angular/core';
-import { HighlightSlider } from '../../directives/highlight-slider';
+import { Component, input, output } from '@angular/core';
+import { HighlightSlider } from '../../../directives/highlight-slider';
 
 @Component({
-  selector: 'app-slider',
+  selector: 'app-slider-controller',
   imports: [HighlightSlider],
   host: { class: 'w-full' },
-  templateUrl: './slider.html',
-  styleUrl: './slider.scss',
+  templateUrl: './slider-controller.html',
+  styleUrl: './slider-controller.scss',
 })
-export class Slider {
+export class SliderController {
   // * Outputs
   valueChanged = output<number>();
 

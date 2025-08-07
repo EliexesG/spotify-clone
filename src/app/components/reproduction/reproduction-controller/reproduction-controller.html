@@ -82,7 +82,7 @@
   </div>
   <div class="flex items-center gap-4 justify-center w-full">
     <p class="m-0 text-xs font-light">{{ currentTimeString() }}</p>
-    <app-slider
+    <app-slider-controller
       type="range"
       [min]="0"
       [max]="duration()"
@@ -101,14 +101,14 @@
   <i [ngClass]="['pi pi-bars', buttonClass]"></i>
   <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
   <i [ngClass]="[volumeIcon(), buttonClass]"></i>
-  <app-slider
+  <app-slider-controller
     [min]="0"
     [max]="1"
     [value]="volume()"
     [step]="0.1"
     class="w-20!"
     (valueChanged)="musicPlayer.changeVolume($event)"
-  ></app-slider>
+  ></app-slider-controller>
   <i [ngClass]="['pi pi-window-maximize', buttonClass]"></i>
   <i [ngClass]="['pi pi-expand', buttonClass]"></i>
 </section>
