@@ -19,5 +19,19 @@
     "title": "¿Por qué?",
     "artist": "EliexesG",
     "url": "songs/por_que.wav"
+  },
+  {
+    "id": "4",
+    "img": "https://cdn2.suno.ai/image_large_4086c3c3-d1e2-43f7-8d82-25adcb7f455e.jpeg",
+    "title": "Rappers de Segunda",
+    "artist": "EliexesG",
+    "url": "songs/rappers_de_segunda.wav"
+  },
+  {
+    "id": "5",
+    "img": "https://cdn2.suno.ai/image_large_89c0b831-2a0b-460f-834e-4d6b8ada5544.jpeg",
+    "title": "Space",
+    "artist": "EliexesG",
+    "url": "songs/space.wav"
   }
 ]

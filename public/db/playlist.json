@@ -1,18 +1,18 @@
 [
   {
     "id": "1",
-    "title": "Music I love",
-    "description": "Best music ever",
+    "title": "Tranquila y bonita",
+    "description": "Musica acerca del amor",
     "owner": "EliexesG",
     "img": "https://cdn2.suno.ai/image_large_3880b9af-996c-426f-9af1-a8fe3d793322.jpeg",
-    "music": ["1", "2", "3"]
+    "music": ["1", "2"]
   },
   {
     "id": "2",
-    "title": "Music I like",
-    "description": "Best music ever",
+    "title": "Rap",
+    "description": "Musica rap",
     "owner": "EliexesG",
-    "img": "https://cdn2.suno.ai/image_large_75401805-4595-43f1-a9e6-d0b59956f127.jpeg",
-    "music": ["2", "1"]
+    "img": "https://cdn2.suno.ai/image_large_e28e3489-bcc1-4132-ba37-d98f90914d2b.jpeg",
+    "music": ["3", "4", "5"]
   }
 ]
