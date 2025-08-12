@@ -1,11 +1,12 @@
 <section
-  class="flex flex-col w-full h-full rounded-2xl bg-[var(--secondary)] p-4"
-  [ngClass]="{ 'w-20': expanded() }"
+  class="flex flex-col w-full h-full rounded-2xl bg-[var(--secondary)] p-3 overflow-y-auto transition-all!"
+  [ngClass]="{ 'min-w-[500px]': expanded() }"
 >
+  <!-- * Library Header -->
   <section
     (click)="toggleExpanded()"
     class="flex items-center justify-start w-full h-10 shadow ps-2 cursor-pointer"
-    [ngClass]="{ 'justify-center!': !expanded() }"
+    [ngClass]="{ 'justify-center! ps-0!': !expanded() }"
   >
     <i class="text-white pi pi-bars"></i>
 
@@ -13,9 +14,18 @@
       <p class="font-bold ms-2 text-white">Your library</p>
     }
   </section>
-  <section
-    class="w-full grow overflow-y-scroll flex flex-col justify-start align-middle"
-  >
+
+  <!-- * Library Searcher -->
+  @if (expanded()) {
+    <section class="w-fit p-2">
+      <app-library-searcher
+        (searchText)="textSearch.set($event)"
+      ></app-library-searcher>
+    </section>
+  }
+
+  <!-- * Library Content -->
+  <section class="w-full flex flex-col justify-start align-middle">
     @for (playlist of filteredPlaylists(); track $index) {
       <app-library-card
         [background]="false"

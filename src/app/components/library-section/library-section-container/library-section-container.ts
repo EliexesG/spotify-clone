@@ -2,14 +2,15 @@ import { Component, computed, inject, model, signal } from '@angular/core';
 import { CrudPlaylist } from '../../../services/crud-playlist';
 import { LibraryCard } from '../library-card/library-card';
 import { CommonModule } from '@angular/common';
+import { LibrarySearcher } from '../library-searcher/library-searcher';
 
 @Component({
-  selector: 'app-library-section',
-  imports: [LibraryCard, CommonModule],
-  templateUrl: './library-section.html',
-  styleUrl: './library-section.scss',
+  selector: 'app-library-section-container',
+  imports: [LibraryCard, CommonModule, LibrarySearcher],
+  templateUrl: './library-section-container.html',
+  styleUrl: './library-section-container.scss',
 })
-export class LibrarySection {
+export class LibrarySectionContainer {
   // * Services
   private readonly _crudPlaylist = inject(CrudPlaylist);
 
@@ -18,15 +19,17 @@ export class LibrarySection {
 
   // * State
   textSearch = model('');
-  expanded = signal(false);
+  expanded = signal(true);
 
   // * Computed
   filteredPlaylists = computed(() => {
-    const text = this.textSearch();
+    const text = this.textSearch().trim().toLowerCase();
 
     if (text.trim().length === 0) return this.playlists;
 
-    return this.playlists?.filter((playlist) => playlist.title.includes(text));
+    return this.playlists?.filter((playlist) =>
+      playlist.title.trim().toLowerCase().includes(text),
+    );
   });
 
   toggleExpanded() {
