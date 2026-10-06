@@ -75,19 +75,22 @@
 
 ## E. Risks / bugs (fix before/with feature work)
 
-1. **ID-space collision** — `LibraryCard.play()` compares ids across entity types; playlist id "2" (Rap) collides with song id "2" (Yeshua) → clicking playlist while song with same id is current is a no-op (`library-card.ts:104,111`). *Fix: tag source with kind or compare type + id.*
-2. **`onended` double-ownership** — `AudioResolver` (`audio-resolver.ts:123-125`) and `PlaylistPlayer` (`playlist-player.ts:63-71`) both assign the native `onended` property; last-wins. Fragile — switch to `addEventListener` or a single owner dispatching to subscribers.
-3. **`as any` + non-null `!` in `CrudPlaylist`** (`crud-playlist.ts:23,30`) — a bad id in `playlist.json` silently yields undefined tracks; make the query fail loudly or filter.
-4. **`getAllPlaylists(): PlaylistSource[] | undefined`** never returns undefined — lying signature forces needless `?.` handling (`crud-playlist.ts:26-33`).
-5. **`changeMusicSource(null)` doesn't stop audio** (`music-player.ts:73-81`) — early return before stop; not currently reachable but latent.
-6. **Shuffle recursion** can heap-stack on single-song playlists (`playlist-player.ts:229-235`) — degenerate but possible as data grows.
-7. **Reference-equality indexing** — `playlist.music.indexOf(currentMusic)` breaks if query helpers ever map/copy objects (`playlist-player.ts:37`).
-8. **Silent audio-error loop** — no `onerror`; failed loads leave playing-state UI with no sound (observed ERR_CONNECTION_REFUSED logs).
-9. **Invalid DOM** — literal `<body>` inside main (`scaffold.html:4`) and `<ng-component>` as template-outlet host (`library-card.html:31,39`).
-10. **`interval(100)` polling per slider** — both sliders run lifetime polling for progress-fill sync; replace with signal→style effect (`highlight-slider.ts:44-52`).
-11. **Hardcoded playlist `'1'`** in `Scaffold` constructor (`scaffold.ts:21`).
-12. **External CDN covers** (`cdn2.suno.ai`) with no fallback (`songs.json` img fields).
-13. **Focus-visible absence** on all transport buttons (`reproduction-controller.html:3-4`) — pairs with zero-aria item in §C.
+> **Status: all items fixed on `fix/bugs` (2026-10-06).** Verified by 9 Vitest specs + Playwright regression (collision, shuffle cycle, error recovery, cover fallback).
+
+1. ~~**ID-space collision**~~ ✅ `d91a37b` — same-namespace comparisons in `LibraryCard.play()`; regression-tested (playing song id 2 while clicking playlist id 2 now switches queues).
+2. ~~**`onended` double-ownership**~~ ✅ `ae1d21d` — `addEventListener` + shared `audioEnded` stream; both owners coexist.
+3. ~~**`as any` + non-null `!` in `CrudPlaylist`**~~ ✅ `e2e31f2` — typed resolution, missing ids are reported via `console.warn`.
+4. ~~**`getAllPlaylists(): PlaylistSource[] | undefined`**~~ ✅ `e2e31f2` — honest signature.
+5. ~~**`changeMusicSource(null)` doesn't stop audio**~~ ✅ `ae1d21d` — clears + `clearAudio()`; unit-tested.
+6. ~~**Shuffle recursion stack-overflow**~~ ✅ `ae1d21d` — iterative candidate pool; 1-song playlists replay; unit-tested.
+7. ~~**Reference-equality indexing**~~ ✅ `ae1d21d` — `findIndex` by id; unit-tested with copied track objects.
+8. ~~**Silent audio-error loop**~~ ✅ `ae1d21d`/`d91a37b` — `error` listener + `audioError` signal + guarded/recovering `reproduceAudio()` (retry via `load()`); Playwright-verified (broken → warn, no fake playing state; restored → plays).
+9. ~~**Invalid DOM**~~ ✅ `d91a37b` — `<body>`→`<div>`, `<ng-component>`→`<ng-container>`.
+10. ~~**`interval(100)` polling per slider**~~ ✅ `ae1d21d` — signal/effect-driven fill, polling deleted.
+11. ~~**Hardcoded playlist `'1'`**~~ ✅ `e2e31f2` — `CrudPlaylist.getDefaultPlaylist()` with fallback to first playlist.
+12. **External CDN covers** ✅ `d91a37b` — in-app fallback (dark block + music note) added on `error` (user-approved scope add).
+13. **Focus-visible absence** ✅ `d91a37b` — global `:focus-visible` ring; `outline-none` utilities no longer eat keyboard focus.
+14. **A11y pass remains open** (aria/roles/labels) — tracked for the accessibility work item; focus styling (13) landed as the first slice.
 
 ## Suggested build order (needs owner prioritization)
 

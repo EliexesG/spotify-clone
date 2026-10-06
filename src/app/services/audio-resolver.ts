@@ -249,6 +249,17 @@ export class AudioResolver {
    * trigger the audio element to start playing if it is not already playing.
    */
   reproduceAudio() {
+    const audio = this._audio.getValue();
+
+    if (audio && audio.error) {
+      // * A previously-failed load can be retried: load() clears the media
+      // * error state and re-queues the source for playback
+      const message = `Audio source was in error state, retrying load: ${audio.currentSrc || audio.src}`;
+      this._audioError.set(null);
+      console.warn(message);
+      audio.load();
+    }
+
     this._audioReproducing.set(true);
   }
 
