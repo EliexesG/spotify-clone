@@ -1,30 +1,44 @@
 import {
-  DestroyRef,
   Directive,
   ElementRef,
+  effect,
   inject,
   input,
   OnInit,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval } from 'rxjs';
 
 @Directive({
   selector: '[appHighlightSlider]',
 })
 export class HighlightSlider implements OnInit {
-  colorLeft = input<string>('var(--primary)');
-  colorRight = input<string>('gray');
+  colorLeft = input<string>('var(--primary)', {
+    alias: 'appHighlightSliderColorLeft',
+  });
+  colorRight = input<string>('gray', {
+    alias: 'appHighlightSliderColorRight',
+  });
   hovering = signal<boolean>(false);
 
-  private lastValue = signal<number | string>(0);
-  private destroy$ = inject(DestroyRef);
+  /**
+   * Value of the host slider, bound so the progress fill reacts to
+   * programmatic value changes without polling the DOM.
+   */
+  appHighlightSliderValue = input<number | string>(0);
+
   private el = inject<ElementRef<HTMLInputElement>>(ElementRef);
+
+  constructor() {
+    // * React to every source of value change: bound [value] updates and hovering
+    effect(() => {
+      this.appHighlightSliderValue();
+      this.hovering();
+      this.updateSliderBackground();
+    });
+  }
 
   ngOnInit(): void {
     const slider = this.el.nativeElement;
-    this.updateSliderBackground();
 
     // Detect when the slider value changes by the user
     slider.oninput = () => {
@@ -36,20 +50,11 @@ export class HighlightSlider implements OnInit {
       this.hovering.set(true);
       this.updateSliderBackground();
     };
+
     slider.onmouseleave = () => {
       this.hovering.set(false);
       this.updateSliderBackground();
     };
-
-    // Fallback to update the slider background every 100ms when the value changes
-    interval(100)
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe(() => {
-        if (slider.value !== this.lastValue()) {
-          this.lastValue.set(slider.value);
-          this.updateSliderBackground();
-        }
-      });
   }
 
   /**

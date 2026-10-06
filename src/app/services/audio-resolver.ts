@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { CurrentTime } from '../interfaces/current-time';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class AudioResolver {
   private readonly _audio = new BehaviorSubject<HTMLAudioElement | null>(null);
+  private readonly _audioEnded = new Subject<HTMLAudioElement>();
   private destroy$ = inject(DestroyRef);
 
   //#region Signals
@@ -25,11 +26,40 @@ export class AudioResolver {
     currentTime: 0,
     cause: 'reproduction',
   });
+  private readonly _audioError = signal<string | null>(null);
+  private readonly _audioBuffering = signal(false);
+
+  /**
+   * Listeners attached to the current audio element, kept as
+   * [element, type, handler] tuples so they can be detached in setAudio/clearAudio.
+   */
+  private _currentListeners: Array<{
+    element: HTMLAudioElement;
+    type: string;
+    handler: EventListener;
+  }> = [];
   //#endregion
 
   //#region Getters
   get audio(): Observable<HTMLAudioElement | null> {
     return this._audio.asObservable();
+  }
+
+  /**
+   * Emits the audio element every time its playback ends.
+   * Listeners on the raw element have to be avoided to not overwrite
+   * internal ended-bookkeeping (multiple subscribers coexist via this stream).
+   */
+  get audioEnded(): Observable<HTMLAudioElement> {
+    return this._audioEnded.asObservable();
+  }
+
+  get audioError(): Signal<string | null> {
+    return this._audioError.asReadonly();
+  }
+
+  get audioBuffering(): Signal<boolean> {
+    return this._audioBuffering.asReadonly();
   }
 
   get audioReproducing(): Signal<boolean> {
@@ -103,39 +133,93 @@ export class AudioResolver {
    */
   private loadAudioSubcription() {
     this._audio.pipe(takeUntilDestroyed(this.destroy$)).subscribe((audio) => {
+      this.detachAudioListeners();
+
       if (!audio) {
         this._audioDuration.set(0);
         return;
       }
 
       // * Initial config
-      audio.volume = this._audioVolume();
-      audio.currentTime = this._audioCurrentTime().currentTime;
+      const el = audio;
+      el.volume = this._audioVolume();
+      el.currentTime = this._audioCurrentTime().currentTime;
 
-      // * Listeners
-      audio.ontimeupdate = async () => {
+      // * Listeners (addEventListener keeps coexisting subscribers safe:
+      // * assigning audio.onended would silently overwrite other owners)
+      const listener = (type: string, handler: CallableFunction) => {
+        const typedHandler = handler as EventListener;
+        el.addEventListener(type, typedHandler);
+        this._currentListeners.push({ element: el, type, handler: typedHandler });
+      };
+
+      listener('timeupdate', () => {
         this._audioCurrentTime.set({
-          currentTime: audio.currentTime,
+          currentTime: el.currentTime,
           cause: 'reproduction',
         });
-      };
+      });
 
-      audio.onended = () => {
+      listener('ended', () => {
         this._audioReproducing.set(false);
-      };
+        this._audioEnded.next(el);
+      });
 
-      audio.onplay = () => {
+      listener('play', () => {
         this._audioReproducing.set(true);
-      };
+      });
 
-      audio.onpause = () => {
+      listener('pause', () => {
         this._audioReproducing.set(false);
-      };
+      });
 
-      audio.oncanplay = () => {
-        this._audioDuration.set(Math.round(audio.duration));
-      };
+      listener('canplay', () => {
+        this._audioBuffering.set(false);
+        this._audioError.set(null);
+        this._audioDuration.set(Math.round(el.duration));
+      });
+
+      listener('waiting', () => {
+        this._audioBuffering.set(true);
+      });
+
+      listener('error', () => {
+        this._audioReproducing.set(false);
+        const message = `Failed to load audio: ${el.currentSrc || el.src}`;
+        this._audioError.set(message);
+        console.warn(message);
+      });
     });
+  }
+
+  /**
+   * Removes every listener previously attached to an audio element.
+   */
+  private detachAudioListeners() {
+    this._currentListeners.forEach(({ element, type, handler }) => {
+      element.removeEventListener(type, handler);
+    });
+    this._currentListeners = [];
+  }
+
+  /**
+   * Clears the current audio element, resets the playback signals and stops playback.
+   */
+  clearAudio() {
+    const audio = this._audio.getValue();
+    this.detachAudioListeners();
+
+    if (audio) {
+      audio.pause();
+      audio.remove();
+    }
+
+    this._audio.next(null);
+    this._audioReproducing.set(false);
+    this._audioDuration.set(0);
+    this._audioCurrentTime.set({ currentTime: 0, cause: 'controller' });
+    this._audioError.set(null);
+    this._audioBuffering.set(false);
   }
 
   /**
@@ -148,8 +232,12 @@ export class AudioResolver {
    */
   setAudio(url: string) {
     // destroy previous one
-    this._audio.getValue()?.pause();
-    this._audio.getValue()?.remove();
+    this.detachAudioListeners();
+    this._audioError.set(null);
+    this._audioBuffering.set(false);
+    const previous = this._audio.getValue();
+    previous?.pause();
+    previous?.remove();
     this._audio.next(null);
     this._audio.next(new Audio(url));
   }

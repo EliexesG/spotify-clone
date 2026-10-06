@@ -26,8 +26,8 @@ export class CrudPlaylist {
   getAllPlaylists(): PlaylistSource[] | undefined {
     return playlists.map((playlist) => ({
       ...playlist,
-      music: playlist.music.map(
-        (musicId) => this._crudMusic.getMusicById(musicId)!,
+      music: playlist.music.map((musicId) =>
+        this._crudMusic.getMusicById(musicId)!,
       ),
     }));
   }

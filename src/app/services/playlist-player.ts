@@ -34,7 +34,15 @@ export class PlaylistPlayer {
 
     if (!playlist || !currentMusic) return 0;
 
-    return playlist.music.indexOf(currentMusic);
+    // * Match by id: reference identity breaks as soon as any mapping/copy
+    // * happens in the query helpers
+    const index = playlist.music.findIndex(
+      (music) => music.id === currentMusic.id,
+    );
+
+    if (index === -1) return 0;
+
+    return index;
   });
   //#endregion
 
@@ -60,14 +68,12 @@ export class PlaylistPlayer {
    * it adds the current music index to the already played music indexes.
    */
   constructor() {
-    this._audioResolver.audio
+    // * Auto-advance when the current song ends; subscribing to the resolver's
+    // * ended stream instead of overwriting audio.onended keeps both owners alive
+    this._audioResolver.audioEnded
       .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe((audio) => {
-        if (!audio) return;
-
-        audio.onended = () => {
-          this.playNextMusic();
-        };
+      .subscribe(() => {
+        if (this._playlistSource()) this.playNextMusic();
       });
 
     // * For reproduction in case it was triggered somewhere else
@@ -213,31 +219,43 @@ export class PlaylistPlayer {
    */
   private calculateNextMusicIndex(): number {
     const playlist = this.playlistSource()?.music;
+
+    if (!playlist?.length) return 0;
+
     const currentIndex = this.currentMusicIndex();
     const shuffle = this.isShuffle();
-    const alreadyPlayedMusic = this._alreadyPlayedMusicIndexes();
 
-    let index = 0;
-
-    if (!playlist) return index;
-
-    // * If the playlist has already been played, reset the already played music
-    if (alreadyPlayedMusic.length === playlist.length)
+    // * Cycle: when everything was played, start a new round
+    if (this._alreadyPlayedMusicIndexes().length >= playlist.length)
       this._alreadyPlayedMusicIndexes.set([]);
 
-    if (shuffle) {
-      const randomIndex = Math.floor(Math.random() * playlist.length);
-      const validIndex =
-        randomIndex !== currentIndex &&
-        !this._alreadyPlayedMusicIndexes().includes(randomIndex);
+    if (!shuffle)
+      return currentIndex < playlist.length - 1 ? currentIndex + 1 : 0;
 
-      if (validIndex) index = randomIndex;
-      else index = this.calculateNextMusicIndex();
-    } else if (currentIndex < playlist!.length - 1) {
-      index = currentIndex + 1;
+    // * Shuffle: iterate over a pool of candidates instead of recursing
+    // * (a single-song playlist would busy-loop the previous implementation)
+    const candidates = playlist
+      .map((_, index) => index)
+      .filter(
+        (index) =>
+          index !== currentIndex &&
+          !this._alreadyPlayedMusicIndexes().includes(index),
+      );
+
+    if (!candidates.length) {
+      this._alreadyPlayedMusicIndexes.set([]);
+
+      const others = playlist
+        .map((_, index) => index)
+        .filter((index) => index !== currentIndex);
+
+      // * Single-song playlist: replay it
+      if (!others.length) return currentIndex;
+
+      return others[Math.floor(Math.random() * others.length)];
     }
 
-    return index;
+    return candidates[Math.floor(Math.random() * candidates.length)];
   }
 
   /**

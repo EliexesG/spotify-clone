@@ -24,6 +24,8 @@ export class SliderController {
   min = input(0);
   max = input(0);
   disabled = input(false);
+  colorLeft = input<string>('var(--primary)');
+  colorRight = input<string>('gray');
 
   /**
    * Emits the new value of the slider when it changes.

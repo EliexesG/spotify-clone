@@ -71,13 +71,15 @@ export class MusicPlayer {
    * @param music - The new music source to be set, or null to clear the current source.
    */
   changeMusicSource(music: MusicSource | null) {
+    if (!music) {
+      this._musicSource.set(null);
+      this._audioResolver.clearAudio();
+      return;
+    }
+
     this._musicSource.set(music);
-    const currentMusic = this._musicSource();
-
-    if (!currentMusic) return;
-
-    this._audioResolver.setAudio(currentMusic.url);
     this.stopMusic();
+    this._audioResolver.setAudio(music.url);
   }
   //#endregion
 

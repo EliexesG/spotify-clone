@@ -18,6 +18,8 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Welcome to the Scaffold Page');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Welcome to the Scaffold Page',
+    );
   });
 });
