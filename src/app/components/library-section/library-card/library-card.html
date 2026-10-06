@@ -8,12 +8,22 @@
     class="w-14 h-14 relative"
     (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
   >
-    <img
-      [src]="img()"
-      alt="Music Cover"
-      class="w-full h-full object-cover"
-      [ngClass]="{ 'opacity-[0.5]': hover() }"
-    />
+    @if (imgError()) {
+      <div
+        class="w-full h-full flex items-center justify-center bg-(--highlight)"
+        [ngClass]="{ 'opacity-[0.5]': hover() }"
+      >
+        <i class="pi pi-music-note text-gray-400"></i>
+      </div>
+    } @else {
+      <img
+        [src]="img()"
+        alt="Music Cover"
+        class="w-full h-full object-cover"
+        [ngClass]="{ 'opacity-[0.5]': hover() }"
+        (error)="imgError.set(true)"
+      />
+    }
     <i
       [hidden]="!hover()"
       [class]="playButtonClass"
@@ -28,7 +38,7 @@
     [class]="cardClass + ' justify-center w-fit'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
   >
-    <ng-component [ngTemplateOutlet]="imgTemplate"></ng-component>
+    <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
   </div>
 } @else if (variant() === "with-description") {
   <div
@@ -36,7 +46,7 @@
     [class]="cardClass + ' justify-start w-full'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
   >
-    <ng-component class="" [ngTemplateOutlet]="imgTemplate"></ng-component>
+    <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
     <div class="ms-3">
       <p
         class="font-bold text-sm"

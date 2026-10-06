@@ -67,11 +67,15 @@ export class LibraryCard {
 
   // * State
   hover = signal(false);
+  imgError = signal(false);
   card = viewChild<ElementRef<HTMLDivElement>>('card');
 
   constructor() {
     effect(() => {
       const card = this.card()?.nativeElement;
+      this.img(); // * reset fallback state on every source change
+
+      if (this.imgError()) this.imgError.set(false);
 
       if (!card) return;
 
@@ -88,28 +92,30 @@ export class LibraryCard {
   /**
    * Plays the music or playlist.
    *
-   * If the source is a music and it is already playing, it does nothing.
-   * If the source is a music and it is not playing, it changes the music source to it and plays it.
-   *
-   * If the source is a playlist and it is already playing, it does nothing.
-   * If the source is a playlist and it is not playing, it changes the playlist source to it and plays it.
+   * Music cards compare exclusively against the current music source and
+   * playlist cards exclusively against the current playlist source:
+   * playlist ids and music ids live in different namespaces
+   * (both are plain strings like "2") and must never be compared.
    */
   play() {
     const source = this.source();
-    const musicSource = this._musicPlayer.musicSource();
-    const playlistSource = this._playlistPlayer.playlistSource();
 
-    if (this.isMusic(source) && source.id === musicSource?.id) {
+    if (this.isMusic(source)) {
+      if (source.id !== this._musicPlayer.musicSource()?.id) {
+        this._musicPlayer.changeMusicSource(source);
+      }
+
       this._musicPlayer.playMusic();
-    } else if (this.isMusic(source) && source.id !== playlistSource?.id) {
-      this._musicPlayer.changeMusicSource(source);
-      this._musicPlayer.playMusic();
+      return;
     }
 
-    if (this.isPlaylist(source) && source.id === playlistSource?.id) {
+    if (this.isPlaylist(source)) {
+      if (source.id !== this._playlistPlayer.playlistSource()?.id) {
+        this._playlistPlayer.changePlaylistSource(source, true);
+        return;
+      }
+
       this._musicPlayer.playMusic();
-    } else if (this.isPlaylist(source) && source.id !== musicSource?.id) {
-      this._playlistPlayer.changePlaylistSource(source, true);
     }
   }
 

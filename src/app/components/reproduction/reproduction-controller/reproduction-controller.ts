@@ -1,7 +1,9 @@
 import {
   Component,
   computed,
+  effect,
   inject,
+  signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { MusicPlayer } from '../../../services/music-player';
@@ -32,6 +34,18 @@ export class ReproductionController {
   currentTimeString = this.musicPlayer.currentTimeString;
   durationString = this.musicPlayer.durationString;
   isShuffle = this.playlistPlayer.isShuffle;
+  //#endregion
+
+  //#region State
+  imgError = signal(false);
+
+  constructor() {
+    // * Reset the cover-fallback state every time the music changes
+    effect(() => {
+      this.musicSource();
+      this.imgError.set(false);
+    });
+  }
   //#endregion
 
   //#region Computed

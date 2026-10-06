@@ -11,7 +11,20 @@
   @let musicSource = this.musicSource();
 
   @if (musicSource) {
-    <img [src]="musicSource.img" alt="Music Cover" class="w-16 h-16 rounded" />
+    @if (imgError()) {
+      <div
+        class="w-16 h-16 rounded flex items-center justify-center bg-(--highlight)"
+      >
+        <i class="pi pi-music-note text-gray-400"></i>
+      </div>
+    } @else {
+      <img
+        [src]="musicSource.img"
+        alt="Music Cover"
+        class="w-16 h-16 rounded"
+        (error)="imgError.set(true)"
+      />
+    }
     <div>
       <p class="font-bold text-sm">{{ musicSource.title }}</p>
       <p class="font-light text-gray-300 text-xs">{{ musicSource.artist }}</p>
