@@ -60,11 +60,11 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 4 — Karma → Vitest
 
-- [ ] `ng generate @angular/core:migrate-karma-to-vitest` — switches builder to `@angular/build:unit-test`, adds/removes deps
-- [ ] `ng generate @angular/core:refactor-jasmine-vitest` — converts `src/app/app.spec.ts` to Vitest APIs
-- [ ] Remove leftover deps if the schematic doesn't: `npm uninstall karma karma-chrome-launcher karma-coverage karma-jasmine karma-jasmine-html-reporter @types/jasmine`
-- [ ] If zone.js was kept for tests (we removed it), don't add `zone.js/plugins/vitest-patch`; write zoneless-native tests instead
-- [ ] `ng test --watch=false` must pass with no Chrome dependency
+- [x] Run `ng update @angular/cli --name migrate-karma-to-vitest` → **schematic lives under `ng update`, not `ng generate`; switched builder to `@angular/build:unit-test`, added `vitest` dep, created `:build:testing` config, spec types → `vitest/globals`**
+- [x] Run `ng g @schematics/angular:refactor-jasmine-vitest` → **app.spec.ts needed no transformation (jasmine globals map to Vitest globals); report file deleted**
+- [x] Remove leftover deps: `karma`, `karma-chrome-launcher`, `karma-coverage`, `karma-jasmine`, `karma-jasmine-html-reporter`, `@types/jasmine`, `jasmine-core`, `istanbul-lib-instrument` → **plus `npm i -D jsdom` — unit-test builder requires a DOM env outside browser mode**
+- [x] No zone.js polyfill in tests (fully zoneless; `zone.js/plugins/vitest-patch` NOT added)
+- [x] `ng test --watch=false` passes — **Vitest 5.0.3, 1 file / 2 tests, ~1.4 s, no Chrome dependency**
 
 ## Phase 5 — Post-migration review
 
