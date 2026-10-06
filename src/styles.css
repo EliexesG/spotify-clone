@@ -8,6 +8,8 @@
   --highlight: #1f1f1f; /* hover background */
   --muted: #b3b3b3; /* subtitles / secondary text */
   --track: #4d4d4d; /* slider unfilled track */
+  --elevated: #181818; /* card background (home grid) */
+  --hover-elevated: #282828; /* card hover background */
 }
 
 html {

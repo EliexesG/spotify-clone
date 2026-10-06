@@ -9,10 +9,10 @@
 
 | Category | Count | Headline |
 |---|---|---|
-| Dead code / unused | 11 | `MainScreen` component never rendered; stray `<audio>`; empty `RouterOutlet` |
+| ~~Dead code / unused~~ | 0 — ✅ **cleaned (D)** | all deletions landed; two entries became obsolete via G (routing, `big`) |
 | Finished | 12 | Full transport, shuffle, queue auto-advance, library sidebar + search |
 | Half-done / incomplete | 13 | Queue panel is a literal string; repeat modes; mute; header is text |
-| Undone / not started | 12 | Routing, CRUD playlists, likes, persistence, responsive, a11y |
+| Undone / not started | 11 | ~~Routing~~ ✅ (G1); CRUD playlists, likes, persistence, responsive, a11y |
 | Risks / bugs | 17 (14 + 3 scrub round) | id-space collision; onended double-owner; scrub-commit race |
 
 ## A. Finished ✔
@@ -33,12 +33,12 @@
 ## B. Half-done / incomplete ◐
 
 1. **Reproduction List panel** — literal string header in `scaffold.html:15`; no queue component, song rows, or per-row play exists.
-2. **Main content area** — stub `<h1>Welcome to the Scaffold Page</h1>` + empty `<router-outlet>` (`scaffold.html:11-12`); `MainScreen` exists, empty, unused (`main-screen.ts:10`).
+2. ~~**Main content area** — stub `h1` + empty `<router-outlet>`~~ → ✅ **resolved**: center is routed (G Phases 1–2); `MainScreen` deleted (D).
 3. **Header** — literal "Header" text; no nav, logo, user menu (`scaffold.html:3`).
 4. **Repeat modes** — only a restart button (seek-to-0); no off/all/one modes (`reproduction-controller.html:75-81`).
 5. **Mute** — volume icon is reactive but not clickable (`reproduction-controller.html:103`).
 6. **Decorative icon cluster** — mobile/mic/bars/headphones/maximize/expand and minus/plus-circle icons render but are plain `<i>`, no handlers/semantics (`reproduction-controller.html:19-20,99-113`).
-7. **`big` card variant** — declared in `library-card.model.ts:1`, template is an empty `<div>` stub (`library-card.html:50-51`); no grid rendering path.
+7. ~~**`big` card variant** — declared but template is an empty `<div>` stub~~ → ✅ **implemented (Phase 2)**: home-grid card with large cover, hover-revealed floating green play/pause button, title/subtitle; grid path in `HomeView`.
 8. ~~**Unused colorInput slots**~~ ✅ `d91a37b`+color-token round — `colorLeft/colorRight` now bound via `slider-controller.html` (`[appHighlightSliderColorLeft/Right]`); `background` input on `LibraryCard` still unbound (small cleanup).
 9. **`alreadyPlayedMusicIndexes`** — maintained by shuffle, exposed but never consumed by UI (`playlist-player.ts:46-48`).
 10. **Search UX** — no empty-result state, no result count, no persisted query (`library-section-container.ts:33-41`).
@@ -48,7 +48,7 @@
 
 ## C. Undone ✗ (*inferred* unless noted)
 
-- **Routing/navigation** — `routes` empty (`app.routes.ts:3`); no playlist-detail/home screens *(code-verified absence)*
+- ~~**Routing/navigation** — `routes` empty; no playlist-detail/home screens~~ → ✅ **started/done (G Phase 1):** real routes + view shells + sidebar navigation live
 - **Queue management UI** — view/remove/reorder tracks; no drag-drop deps *(inferred)*
 - **Likes / add-to-playlist / add-to-library** *(inferred)*
 - **Playlist CRUD** — `CrudMusic`/`CrudPlaylist` are read-only despite the name; no create/edit/delete/rename *(inferred)*
@@ -61,19 +61,20 @@
 - **Media Session API integration** *(inferred)*
 - **Repeat+autoplay policy** / play-on-load options *(inferred)*
 
-## D. Dead code — safe deletions
+## D. Dead code — ~~safe deletions~~ ✅ cleaned 2026-10-06
 
-| Item | Evidence |
+| Item | Outcome |
 |---|---|
-| `src/app/screens/main-screen/` (whole folder) | never imported; empty class + 0-byte html |
-| `<audio hidden>` in `app.html:2` | nothing references it |
-| `RouterOutlet` in `scaffold.ts:2,10` + `scaffold.html:12` | routes empty, renders nothing |
-| `CrudMusic.getAllMusic()` (`crud-music.ts:13-15`) | no callers |
-| `Observable` import (`music-player.ts:4`) | unused |
-| `FormsModule` import (`reproduction-controller.ts:9,15`) | no ngModel in its template |
-| `'big'` variant + `background` input | stubbed/never read |
-| `tailwind.config.js` | 0-byte, unused in Tailwind v4 CSS-first |
-| README sections on e2e/Karma | stale |
+| ~~`src/app/screens/main-screen/` (whole folder)~~ | ✅ deleted |
+| ~~`<audio hidden>` in `app.html:2`~~ | ✅ deleted |
+| ~~`RouterOutlet` dead~~ | → **obsolete**: routing went live (section G Phase 1); outlet now renders routed views |
+| ~~`CrudMusic.getAllMusic()`~~ | ✅ deleted (no callers) |
+| ~~`Observable` import (`music-player.ts`)~~ | ✅ deleted |
+| ~~`FormsModule` import (`reproduction-controller.ts`)~~ | ✅ deleted |
+| ~~`'big'` variant~~ | → **obsolete**: implemented as the home-grid card (Phase 2) |
+| ~~`background` input (`LibraryCard`)~~ | ✅ deleted + `[background]` binder removed from `library-section-container.html` |
+| ~~`tailwind.config.js` (0-byte)~~ | ✅ deleted |
+| ~~README stale sections (Karma/e2e/CLI 20)~~ | ✅ README rewritten to current truth (Vitest, no e2e, ng 22) |
 
 ## E. Risks / bugs (fix before/with feature work)
 
@@ -102,12 +103,14 @@ New feature-behavior request ("no sound while moving the seek bar") surfaced thr
 16. ~~**Direct jump (no drag) needed several clicks**~~ ✅ — clicks with no value change (on/near the thumb) fired `pointerdown` but never `input`/`change`, leaving the player stuck in scrub-paused mode. Fix: commit also on `pointerup` + `pointercancel` (`slider-controller.html`), with `endScrub()` idempotent.
 17. ~~**Click jump reverted to the pre-click time** (race)~~ ✅ — a stale in-flight `timeupdate` (queued before the scrub pause, fires during the human-speed press) overwrote the preview signal, so `endScrub` committed the OLD position. Three-layer fix: (a) `timeupdate` listener ignores events while scrubbing; (b) `dragEnded` now carries the element's committed `valueAsNumber` from the DOM (`slider-controller commit()`) — commit independent of preview signal; (c) `endScrub(commitAt?)` seeks directly/synchronously (skipping when position unchanged — no seek-to-T0 churn) before resuming. Verified in-browser with 400ms holds (the race timing) at 3 positions + full-drag holds: preview stable, first-press commitment, correct resume every time. 17/17 tests incl. `audio-resolver.spec.ts` race regressions.
 
-### Color-token round (2026-10-06, same working tree)
+### Color-token round (2026-10-06, same working tree) — ✅ COMPLETE
 
-- `--primary` `#1db954` → **`#1ed760`** (modern Spotify green); new tokens `--muted` (#b3b3b3) and `--track` (#4d4d4d) in `src/styles.css`
-- Subtitle grays moved to `text-(--muted)` (`library-card`, `reproduction-controller` artist/title subtitles); slider track `gray` → `var(--track)` (`slider-controller.scss`); `colorRight` defaults → `var(--track)` (`slider-controller.ts`, `highlight-slider.ts`)
-- Migrated remaining legacy `bg-[var(--x)]`/`text-[var(--x)]` to Tailwind v4 `(--x)` form across 5 templates/strings — none left
-- `AGENTS.md` updated: theming section (tokens + change-colors-only-there rule), `npm run dev` rename, specs list, **never-kill-owner-dev-server rule**
+> Styling-only round (no behavior changes). All items landed and verified in-browser (computed styles: `#1ed760`, `#b3b3b3`, `#4d4d4d`, `#121212`); build + 17/17 tests green. Not a bug fix — listed here for chronology only.
+
+- ✅ `--primary` `#1db954` → **`#1ed760`** (modern Spotify green); new tokens `--muted` (#b3b3b3) and `--track` (#4d4d4d) in `src/styles.css`
+- ✅ Subtitle grays moved to `text-(--muted)` (`library-card`, `reproduction-controller`); slider track `gray` → `var(--track)` (`slider-controller.scss`); `colorRight` defaults → `var(--track)` (`slider-controller.ts`, `highlight-slider.ts`)
+- ✅ Legacy `bg-[var(--x)]`/`text-[var(--x)]` migrated to Tailwind v4 `(--x)` form across 5 templates/strings — none left in the codebase
+- ✅ `AGENTS.md` updated: theming section (tokens + change-colors-only-there rule), `npm run dev` rename, specs list, **never-kill-owner-dev-server rule**
 
 ## F. Spotify UI parity assessment (fetched 2026-10-06, live web player)
 
@@ -117,15 +120,17 @@ New feature-behavior request ("no sound while moving the seek bar") surfaced thr
 
 ### Verdict table
 
+> Rescored 2026-10-06 after the color-token round (green `#1ed760`, `--muted` subtitles, `--track` slider). Structure scores unchanged (layout untouched).
+
 | Artifact | Structure | Behavior | Visual | Overall |
 |---|---|---|---|---|
 | `Scaffold` shell | 5/10 | n/a | 6/10 | half-done vs real |
 | `LibrarySectionContainer` | 7/10 | 7/10 | 6/10 | good skeleton |
-| `LibraryCard` | 8/10 | 8/10 | 7/10 | close |
+| `LibraryCard` | 8/10 | 8/10 | 8/10 ↑ | close |
 | `LibrarySearcher` | 7/10 | 8/10 | 6/10 | good mini version |
-| `ReproductionController` | 8/10 | 6/10 | 6/10 | close, wrong glyphs |
-| `SliderController` + highlight | 9/10 | 9/10 | 8/10 | most accurate piece |
-| Global theme tokens | 8/10 | — | 7/10 | near match |
+| `ReproductionController` | 8/10 | 6/10 | 7/10 ↑ | close, wrong glyphs |
+| `SliderController` + highlight | 9/10 | 9/10 | 9/10 ↑ | most accurate piece |
+| Global theme tokens | 9/10 ↑ | — | 9/10 ↑ | near match |
 
 ### Findings per artifact
 
@@ -134,8 +139,8 @@ New feature-behavior request ("no sound while moving the seek bar") surfaced thr
 3. **`LibraryCard`** — semantics closest to real playlist rows: 48px cover (ours 56px), bold title + gray `Playlist • Owner` subtitle (same wording pattern), hover `#1f1f1f`, green playing title ✓. Differences: real floating play button sits at the row's right edge (ours overlays the image — that's Spotify's *home-card* pattern), and the playing row shows a green volume icon.
 4. **`LibrarySearcher`** — good micro-interaction (expand pill, outside-click close) but that pattern belongs to Spotify's top-bar search, not the sidebar; real sidebar pairs a search icon with a "Recents" sort control under filter chips.
 5. **`ReproductionController`** — layout matches (left cover/title/add-like, center controls + progress, right utilities). Real center: shuffle, prev, **white filled circle play**, next, **repeat** (off/all/one) — ours has replay-to-zero and a transparent scaled icon. Real right cluster is fully functional (queue, device, lyrics, mute, volume, fullscreen) — ours renders 6 decorative `<i>`s. Cover 64px vs real 56px (trivial).
-6. **Slider** — best piece: 4px bar, hidden→white hover thumb, gradient fill all match. Real grows to 6px on hover (one-line addition).
-7. **Theme tokens** — `#121212` ✓, hover `#1f1f1f` ✓, black base ✓, 8px gaps ✓. Nuances: modern brand green is `#1ED760` (`#1DB954` is legacy); subtitle gray is `#b3b3b3` (ours `text-gray-300`); panel radius 8px not 16px. *(Update 2026-10-06: green → `#1ed760` and `--muted`/`--track` tokens landed; subtitles migrated to `--muted`; remaining `text-gray-*` usages are disabled/fallback states only; panel radius still 16px.)*
+6. **Slider** — best piece: 4px bar, hidden→white hover thumb, gradient fill all match — now with correct colors (`#1ed760` fill on `#4d4d4d` track). Real grows to 6px on hover (one-line addition, open).
+7. **Theme tokens** — `#121212` ✓, hover `#1f1f1f` ✓, black base ✓, 8px gaps ✓. ~~Nuances:~~ **Resolved 2026-10-06:** brand green is now `#1ED760`, subtitle gray `#b3b3b3` (`--muted`), slider track `#4d4d4d` (`--track`); only remaining nuance is panel radius (ours 16px, real 8px) — tracked in gap #7.
 
 ### Parity gaps, ranked
 
@@ -147,11 +152,27 @@ New feature-behavior request ("no sound while moving the seek bar") surfaced thr
 6. Row-hover play button at row-right (move overlay from image)
 7. Panel radius 16px → 8px; ~~subtitle gray `#b3b3b3`~~ (**✅ done** — `--muted` token); slider 4px → 6px on hover (open)
 
+## G. Scaffold completion plan (decided 2026-10-06 — in progress)
+
+Owner decisions: **Angular Router** for view switching · right panel = **Now-playing view** (official match) · **extend songs.json** (`album`/`dateAdded`) · **top bar included** in this round. Reference: real-app screenshot (`.playwright-mcp/spotify_app.png`).
+
+| Phase | Scope | Status |
+|---|---|---|
+| 1 | **Routing foundation** — routes (`''` home grid, `playlist/:id` detail, `**`→`''`), empty view shells wired in the center outlet, sidebar `LibraryCard` navigates (queue load stays) | ✅ done — verified live on the owner's running dev server: `/` renders `app-home-view`, sidebar row click → `/playlist/:id` + queue load, deep links work, 17/17 tests (app.spec now drives the Router), center `h1` stub removed |
+| 2 | **Home grid view** — `big`-variant `LibraryCard` grid (fills B7 stub), grid card click → navigate (no autoplay; overlay button plays), empty state | ✅ done — real `big` template (large cover + floating green play on hover, pause when playing), body click navigates without autoplay, same-playlist guard keeps playback undisturbed; new tokens `--elevated`/`--hover-elevated`; grid verified live. **Behavior refined (owner):** overlay button only *plays* (stays on the grid, like the left-menu cover button — navigation removed); body click *enters* without autoplay |
+| 3 | **Playlist view (song list)** — gradient header (big cover/"Public Playlist"/title/owner/counts), green play button = only interactive control (plays queue), shuffle/others visual-only; track table `# \\| Title \\| Album \\| Date added \\| ⏱`, rows clickable → play track, green current-track title | pending |
+| 4 | **Data model** — `MusicSource.album?`/`dateAdded?` optional fields + values for the 5 tracks | pending |
+| 5 | **Right panel → `NowPlayingView`** — header = current playlist name ("Your Queue" fallback), big current-track cover (fallback pattern reuse), title+artist; empty state when nothing loaded; related-videos/about-artist sections deferred | pending |
+| 6 | **Top bar (visual-only chrome)** — full-width black bar: ⋯ + back/forward (dead), Home circle + search pill (dead), bell/buddy/avatar (dead); replaces literal `"Header"` (B3) | pending |
+| 7 | **Verification** — build, tests, Playwright pass over grid→detail→row-play→right-panel flows; budgets; AUDIT B1/B2/B3/B7/C-routing/F-score updates | pending |
+
+Notes: new view components live in `screens/` (`home-view`, `playlist-view`), keep `ChangeDetectionStrategy.Eager` + signal patterns; `MainScreen` stub stays scheduled for deletion (D) — new views replace it. Big-grid-card click navigates without autoplay (official behavior; sidebar card keeps navigate+play).
+
 ## Suggested build order (needs owner prioritization)
 
-1. Quick wins — D (dead code deletion) + risks #1 #2 #3 (correctness of core playback)
-2. Complete the shell — queue panel (B1), header (B3), main content area (B2) → this unlocks routing
-3. Routing + playlist-detail view + `big` variant grid
+1. ~~Quick wins — risks #1–#14 + dead code (D)~~ ✅ **all done (E + D)**
+2. ~~Complete the shell — main content + routing~~ → ✅ **in progress (G Phases 1–2 done); remaining G: song-list view, Now-playing panel, top bar**
+3. Playlist-detail song table + data model — **current G Phase 3**
 4. Repeat modes, mute, functional side icons (like/add)
 5. CRUD playlists + persistence (localStorage or backend)
 6. Responsive + accessibility pass

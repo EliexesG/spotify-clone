@@ -10,6 +10,7 @@ import {
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { LibraryCardVariant } from './library-card.model';
 import { MusicSource } from '../../../interfaces/music-source';
 import { PlaylistSource } from '../../../interfaces/playlist-source';
@@ -27,11 +28,11 @@ import { MusicPlayer } from '../../../services/music-player';
 export class LibraryCard {
   private readonly _playlistPlayer = inject(PlaylistPlayer);
   private readonly _musicPlayer = inject(MusicPlayer);
+  private readonly _router = inject(Router);
 
   // * Inputs
   variant = input<LibraryCardVariant>('with-description');
   source = input<PlaylistSource | MusicSource>();
-  background = input<boolean>(false);
 
   // * Computed
   title = computed(() => this.source()?.title || 'Title');
@@ -124,6 +125,25 @@ export class LibraryCard {
 
   pause() {
     this._musicPlayer.pauseMusic();
+  }
+
+  /**
+   * Opens the source (official-app behavior for library rows):
+   * playlist cards navigate to their detail view and load the queue
+   * without playing; music cards have no detail route (no-op for now).
+   * The cover keeps its dedicated play/pause handling.
+   */
+  open() {
+    const source = this.source();
+
+    if (!this.isPlaylist(source)) return;
+
+    this._router.navigate(['/playlist', source.id]);
+
+    // * Opening the playlist that is already loaded must not disturb playback
+    if (this._playlistPlayer.playlistSource()?.id !== source.id) {
+      this._playlistPlayer.changePlaylistSource(source, false);
+    }
   }
 
   private isMusic(

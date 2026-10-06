@@ -28,7 +28,6 @@
   <section class="w-full flex flex-col justify-start align-middle">
     @for (playlist of filteredPlaylists(); track $index) {
       <app-library-card
-        [background]="false"
         [source]="playlist"
         [variant]="expanded() ? 'with-description' : 'only-img'"
       ></app-library-card>

@@ -37,6 +37,7 @@
     #card
     [class]="cardClass + ' justify-center w-fit'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
+    (click)="open()"
   >
     <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
   </div>
@@ -45,6 +46,7 @@
     #card
     [class]="cardClass + ' justify-start w-full'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
+    (click)="open()"
   >
     <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
     <div class="ms-3">
@@ -58,5 +60,35 @@
     </div>
   </div>
 } @else {
-  <div></div>
+  <div
+    #card
+    class="relative flex flex-col p-2.5 rounded-md bg-(--elevated) hover:bg-(--hover-elevated) transition-colors cursor-pointer"
+    (click)="open()"
+  >
+    <div class="relative mb-2">
+      @if (imgError()) {
+        <div
+          class="aspect-square w-full rounded-sm bg-(--highlight) flex items-center justify-center"
+        >
+          <i class="pi pi-music-note text-(--muted)"></i>
+        </div>
+      } @else {
+        <img
+          [src]="img()"
+          alt="Playlist cover"
+          class="aspect-square w-full rounded-sm object-cover"
+          (error)="imgError.set(true)"
+        />
+      }
+      <button
+        [hidden]="!hover()"
+        class="absolute bottom-2 right-2 w-12 h-12 rounded-full bg-(--primary) text-black flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+        (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
+      >
+        <i [ngClass]="isPlaying() ? 'pi pi-pause' : 'pi pi-play'"></i>
+      </button>
+    </div>
+    <p class="font-bold mb-0.5 leading-snug">{{ title() }}</p>
+    <p class="font-light text-(--muted) text-sm">{{ subtitle() }}</p>
+  </div>
 }

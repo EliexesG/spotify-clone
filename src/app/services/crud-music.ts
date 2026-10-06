@@ -9,8 +9,4 @@ export class CrudMusic {
   getMusicById(id: string): MusicSource | undefined {
     return music.find((music) => music.id === id);
   }
-
-  getAllMusic(): MusicSource[] {
-    return music;
-  }
 }

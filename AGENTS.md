@@ -21,7 +21,7 @@
 
 ## Theming (colors)
 
-- All theme colors are CSS custom properties in `src/styles.css`: `--primary` (#1ed760, modern Spotify green), `--secondary` (#121212 panels), `--highlight` (#1f1f1f hover), `--muted` (#b3b3b3 subtitles), `--track` (#4d4d4d slider track). Change colors there only — never hardcode hex/grays in components.
+- All theme colors are CSS custom properties in `src/styles.css`: `--primary` (#1ed760, modern Spotify green), `--secondary` (#121212 panels), `--highlight` (#1f1f1f hover), `--muted` (#b3b3b3 subtitles), `--track` (#4d4d4d slider track), `--elevated` (#181818 cards) and `--hover-elevated` (#282828 card hover). Change colors there only — never hardcode hex/grays in components.
 - Tailwind v4 CSS-first: reference tokens with the parenthesized arbitrary syntax — `bg-(--secondary)`, `text-(--muted)` — not the legacy `bg-[var(--x)]` form. No `tailwind.config.js` (0-byte, unused).
 
 ## Data ("database")

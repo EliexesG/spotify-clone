@@ -1,7 +1,6 @@
 import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { MusicSource } from '../interfaces/music-source';
 import { AudioResolver } from './audio-resolver';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
