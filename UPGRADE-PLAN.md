@@ -24,12 +24,12 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 1 — v20 → v21
 
-- [ ] `npx ng update @angular/cli@21 @angular/core@21`
+- [x] `npx ng update @angular/cli@21 @angular/core@21`
   - Auto-updates `@angular/build`, `@angular/ssr` and peer deps to 21 (requires TS ≥5.9)
-- [ ] Review the migration diff only; revert nothing blindly
-- [ ] Watch for the known quirk: migration may inject `provideZoneChangeDetection()` into `main.server.ts` bootstrap (angular/angular#65408) — remove it (we go zoneless in Phase 2)
-- [ ] `ng build` — fix compile errors; run tests once
-- [ ] Bump TypeScript now (step-stone for TS 6 in v22): `npm i -D typescript@^6.0`
+- [x] Review the migration diff only; revert nothing blindly
+- [x] Watch for the known quirk: migration may inject `provideZoneChangeDetection()` into `main.server.ts` bootstrap (angular/angular#65408) — remove it (we go zoneless in Phase 2) → **occurred as predicted; removed**
+- [x] `ng build` — fix compile errors; run tests once (initial 387.97 kB raw / 105.02 kB transfer; tests 2/2 green)
+- [x] Bump TypeScript now (step-stone for TS 6 in v22): `npm i -D typescript@^6.0` → **6.0.3**
 
 ## Phase 2 — Zoneless migration
 
