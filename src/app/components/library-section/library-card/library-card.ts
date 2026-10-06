@@ -6,6 +6,7 @@ import {
   inject,
   input,
   signal,
+  untracked,
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -73,9 +74,11 @@ export class LibraryCard {
   constructor() {
     effect(() => {
       const card = this.card()?.nativeElement;
-      this.img(); // * reset fallback state on every source change
 
-      if (this.imgError()) this.imgError.set(false);
+      // * Track source changes only; the imgError write must NOT depend on
+      // * imgError itself or the reset would clear the just-raised error
+      this.source();
+      untracked(() => this.imgError.set(false));
 
       if (!card) return;
 
