@@ -29,20 +29,21 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 - [x] Review the migration diff only; revert nothing blindly
 - [x] Watch for the known quirk: migration may inject `provideZoneChangeDetection()` into `main.server.ts` bootstrap (angular/angular#65408) — remove it (we go zoneless in Phase 2) → **occurred as predicted; removed**
 - [x] `ng build` — fix compile errors; run tests once (initial 387.97 kB raw / 105.02 kB transfer; tests 2/2 green)
-- [x] Bump TypeScript now (step-stone for TS 6 in v22): `npm i -D typescript@^6.0` → **6.0.3**
+- ~~Bump TypeScript now (step-stone for TS 6 in v22): `npm i -D typescript@^6.0`~~ → **attempted (6.0.3) but reverted to `~5.9.3`: v21 `@angular/build` peer range is `>=5.9 <6.0` (only compiler-cli accepts 6.x). TS 6 bump moves to Phase 3.**
 
 ## Phase 2 — Zoneless migration
 
-- [ ] Remove `provideZoneChangeDetection` from `src/app/app.config.ts`
-- [ ] Remove `zone.js` and `zone.js/testing` from `angular.json` polyfills (build and test targets)
-- [ ] `npm uninstall zone.js`
-- [ ] Verify zoneless compatibility (already confirmed, re-check after edit):
+- [x] Remove `provideZoneChangeDetection` from `src/app/app.config.ts`
+- [x] Remove `zone.js` and `zone.js/testing` from `angular.json` polyfills (build and test targets)
+- [x] `npm uninstall zone.js`
+- [x] Verify zoneless compatibility (already confirmed, re-check after edit):
   - All template state is signals read in templates (audioPlayer services, `filteredPlaylists`, etc.)
   - `[(ngModel)]` (+ FormsModule) schedules CD in zoneless v21+ — ok
   - `@HostListener('document:click')` triggers CD for bound listeners — ok
   - `new Audio()` listeners in `AudioResolver` update signals → CD triggered — ok
   - No `NgZone.onUnstable/onStable/isStable/onMicrotaskEmpty` usage anywhere
   - SSR (disabled, `ssr:false`) would need `PendingTasks` — irrelevant while ssr=false; note for future re-enable
+- [x] **Verified in browser (Playwright):** page renders, play advances clock continuously (signal → CD works), pause freezes clock and icon toggles correctly, 0 console errors. Bundle: polyfills chunk eliminated — initial total 387.97 → **350.21 kB raw**.
 
 ## Phase 3 — v21 → v22
 
