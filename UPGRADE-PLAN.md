@@ -14,11 +14,13 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 0 — Prep
 
-- [ ] Commit/stash all local work; branch off `dev`: `git checkout -b chore/angular-22-upgrade dev`
-- [ ] `npm install` and confirm node_modules is fresh
-- [ ] Baseline verification: `ng build` (record bundle size vs budgets: initial 500kB warn/1MB error; component styles 4kB warn/8kB error)
-- [ ] Baseline tests: `ng test --watch=false --browsers=ChromeHeadless`
-- [ ] Analyze update plan: `npx ng update` (list only)
+- [x] Commit/stash all local work; branch off `dev`: `git checkout -b chore/angular-22-upgrade dev`
+- [x] `npm install` and confirm node_modules is fresh
+- [x] Baseline verification: `ng build` (record bundle size vs budgets: initial 500kB warn/1MB error; component styles 4kB warn/8kB error)
+- [x] Baseline tests: `ng test --watch=false --browsers=ChromeHeadless`
+- [x] Analyze update plan: `npx ng update` (list only)
+
+> **Baseline (2026-10-06, Angular 20.3)**: `ng build` OK — initial total **382.85 kB raw / 104.11 kB transfer** (no budget warnings). Tests: 2/2 green (fixed stale title expectation in `app.spec.ts`: `'Hello, spotify-clone'` → `'Welcome to the Scaffold Page'`). `ng update` analysis: `@angular/cli` 20.3.38 → 21.2.9, `@angular/core` 20.3.33 → 21.2.9 available.
 
 ## Phase 1 — v20 → v21
 
