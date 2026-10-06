@@ -17,8 +17,9 @@ export class Scaffold {
   private readonly _playlistPlayer = inject(PlaylistPlayer);
 
   constructor() {
-    this._playlistPlayer.changePlaylistSource(
-      this._crudPlaylist.getPlaylistById('1') || null,
-    );
+    const defaultPlaylist = this._crudPlaylist.getDefaultPlaylist();
+
+    if (defaultPlaylist)
+      this._playlistPlayer.changePlaylistSource(defaultPlaylist);
   }
 }

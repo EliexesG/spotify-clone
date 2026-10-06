@@ -35,7 +35,7 @@ export class LibrarySectionContainer {
 
     if (text.trim().length === 0) return this.playlists;
 
-    return this.playlists?.filter((playlist) =>
+    return this.playlists.filter((playlist) =>
       playlist.title.trim().toLowerCase().includes(text),
     );
   });
