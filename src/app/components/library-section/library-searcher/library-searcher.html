@@ -1,7 +1,7 @@
 <div
-  class="flex items-center justify-center hover:bg-[var(--highlight)] gap-2 p-2 cursor-pointer h-10 w-10"
+  class="flex items-center justify-center hover:bg-(--highlight) gap-2 p-2 cursor-pointer h-10 w-10"
   [ngClass]="{
-    'rounded bg-[var(--highlight)] w-fit': opened(),
+    'rounded bg-(--highlight) w-fit': opened(),
     'rounded-full': !opened(),
   }"
   (click)="opened.set(true); input.focus()"

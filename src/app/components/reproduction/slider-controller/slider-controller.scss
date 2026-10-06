@@ -7,7 +7,7 @@
   height: 4px;
   border-radius: 5px;
   outline: none;
-  background: gray;
+  background: var(--track);
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;

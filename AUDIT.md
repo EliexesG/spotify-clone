@@ -3,6 +3,8 @@
 > Snapshot: 2026-10-06, branch `dev` (`fb62cba`), post-Angular-22 upgrade.
 > Purpose: reference for planning future work. Evidence verified by agent exploration; items marked *(inferred)* are reasoning, not code-verified.
 
+> **⚠ Scope statement (owner decision, 2026-10-06):** the only *core real functionality* in this project is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual* — UI elements exist to look like Spotify, not to work. Examples: song lists/queue items are clickable (they feed playback), but buttons like **Premium** (and other top-bar/account chrome) are decorative only and will never do anything. Do not plan or build non-playback interactivity unless the owner explicitly asks.
+
 ## Summary
 
 | Category | Count | Headline |
@@ -95,6 +97,8 @@
 ## F. Spotify UI parity assessment (fetched 2026-10-06, live web player)
 
 > Reference: live `open.spotify.com` (a11y tree + screenshot, logged-out shell — full layout skeleton visible). Scores: structure / behavior / visual fidelity vs real UI.
+>
+> **Scope caveat:** per the scope statement above, parity here is *visual* parity. Real Spotify elements that imply non-playback functionality (Premium/Support/Download/Sign up, create-playlist "+", filter chips, legal footer links, device/lyrics panels) are to be replicated visually and left non-functional. Playback-feeding elements (song rows, queue, transport) stay functional.
 
 ### Verdict table
 

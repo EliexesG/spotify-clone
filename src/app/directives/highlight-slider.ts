@@ -15,7 +15,7 @@ export class HighlightSlider implements OnInit {
   colorLeft = input<string>('var(--primary)', {
     alias: 'appHighlightSliderColorLeft',
   });
-  colorRight = input<string>('gray', {
+  colorRight = input<string>('var(--track)', {
     alias: 'appHighlightSliderColorRight',
   });
   hovering = signal<boolean>(false);

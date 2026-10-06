@@ -2,22 +2,32 @@
 
 ## Commands
 
-- `npm start` — dev server at http://localhost:4200 (Angular 22, standalone components, no NgModules, zoneless).
+- `npm run dev` — dev server at http://localhost:4200 (Angular 22, standalone components, no NgModules, zoneless).
 - `ng build` — use this as the verification step (typecheck + strict template checks; no separate lint/tsc script). Fails on bundle budgets: initial 500kB warn / 1MB error; component styles 4kB warn / 8kB error — large SCSS files break the production build.
-- `npx ng test --watch=false` — Vitest via the `@angular/build:unit-test` builder (jsdom environment). No Chrome needed. Only `src/app/app.spec.ts` exists; schematics are configured with `skipTests: true` so generated components/directives/pipes/services produce no spec files.
+- `npx ng test --watch=false` — Vitest via the `@angular/build:unit-test` builder (jsdom environment). No Chrome needed. Specs: `src/app/app.spec.ts` and `src/app/services/playlist-player.spec.ts`; schematics are configured with `skipTests: true` so generated components/directives/pipes/services produce no spec files.
 - No lint config or script. Prettier is configured in `package.json` (HTML files use the `angular` parser).
+
+## Scope (owner decision — read before adding UI)
+
+- The only core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual*: chrome like Premium/Support/Sign up, create-playlist "+", filter chips, legal links is replicated to look like Spotify and stays non-functional. Song lists/queue are clickable because they feed playback.
+- `AUDIT.md` is the living reference: feature completeness, bug status, Spotify UI parity assessment (section F), and the visual-parity scope caveat.
 
 ## Architecture
 
 - Layers under `src/app/`: `screens/` (page components: `scaffold`, `main-screen`), `components/` (`library-section`, `reproduction`), `services/`, `interfaces/`, `directives/`.
 - Root `App` renders `Scaffold` directly; `app.routes.ts` is empty and `RouterOutlet` there is unused so far.
 - Zoneless since the v22 upgrade: no zone.js anywhere. All template state must be signals (`signal`/`computed`/`effect`, `takeUntilDestroyed`), not stores; every component explicitly pins `ChangeDetectionStrategy.Eager` (deliberate — keep it when adding components unless consciously migrating to OnPush).
-- Audio playback: `AudioResolver` wraps `HTMLAudioElement`s behind signals/BehaviorSubject (playing/volume/duration/currentTime) — it's the only place `new Audio(...)` lives. `MusicPlayer` and `PlaylistPlayer` are facades over it.
+- Audio playback: `AudioResolver` wraps `HTMLAudioElement`s behind signals/BehaviorSubject (playing/volume/duration/error/buffering) and exposes an `audioEnded` stream — it's the only place `new Audio(...)` lives, and media handlers must use `addEventListener` (never overwrite `onended` etc.). `MusicPlayer` and `PlaylistPlayer` are facades over it.
+
+## Theming (colors)
+
+- All theme colors are CSS custom properties in `src/styles.css`: `--primary` (#1ed760, modern Spotify green), `--secondary` (#121212 panels), `--highlight` (#1f1f1f hover), `--muted` (#b3b3b3 subtitles), `--track` (#4d4d4d slider track). Change colors there only — never hardcode hex/grays in components.
+- Tailwind v4 CSS-first: reference tokens with the parenthesized arbitrary syntax — `bg-(--secondary)`, `text-(--muted)` — not the legacy `bg-[var(--x)]` form. No `tailwind.config.js` (0-byte, unused).
 
 ## Data ("database")
 
-- Music data is static JSON imported directly into services via `resolveJsonModule`: `public/db/songs.json` and `public/db/playlist.json`. `CrudMusic`/`CrudPlaylist` are just query helpers over these arrays.
-- `playlist.music` holds song IDs that must reference `songs.json` entries. Audio files live in `public/songs/`, icons in `public/icons/`. Adding music = edit JSON + drop files.
+- Music data is static JSON imported directly into services via `resolveJsonModule`: `public/db/songs.json` and `public/db/playlist.json`. `CrudMusic`/`CrudPlaylist` are just query helpers over these arrays (`CrudPlaylist.getDefaultPlaylist()` is the bootstrap entry point, with fallback to the first playlist).
+- `playlist.music` holds song IDs that must reference `songs.json` entries; unresolved ids are `console.warn`ed by `CrudPlaylist`. Audio files live in `public/songs/`, icons in `public/icons/`. Adding music = edit JSON + drop files.
 
 ## Gotchas
 

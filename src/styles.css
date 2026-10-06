@@ -3,9 +3,11 @@
 @import "primeicons/primeicons.css";
 
 :root {
-  --primary: #1db954;
-  --secondary: #121212;
-  --highlight: #1f1f1f;
+  --primary: #1ed760; /* modern Spotify brand green (legacy #1db954) */
+  --secondary: #121212; /* panel background */
+  --highlight: #1f1f1f; /* hover background */
+  --muted: #b3b3b3; /* subtitles / secondary text */
+  --track: #4d4d4d; /* slider unfilled track */
 }
 
 html {
