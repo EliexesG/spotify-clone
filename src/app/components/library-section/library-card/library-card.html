@@ -26,7 +26,7 @@
   <div
     #card
     [class]="cardClass + ' justify-center w-fit'"
-    [ngClass]="{ 'bg-[var(--highlight)]': hover() }"
+    [ngClass]="{ 'bg-(--highlight)': hover() }"
   >
     <ng-component [ngTemplateOutlet]="imgTemplate"></ng-component>
   </div>
@@ -34,13 +34,13 @@
   <div
     #card
     [class]="cardClass + ' justify-start w-full'"
-    [ngClass]="{ 'bg-[var(--highlight)]': hover() }"
+    [ngClass]="{ 'bg-(--highlight)': hover() }"
   >
     <ng-component class="" [ngTemplateOutlet]="imgTemplate"></ng-component>
     <div class="ms-3">
       <p
         class="font-bold text-sm"
-        [ngClass]="{ 'text-[var(--primary)]': isPlaying() }"
+        [ngClass]="{ 'text-(--primary)': isPlaying() }"
       >
         {{ title() }}
       </p>
