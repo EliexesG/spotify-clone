@@ -76,11 +76,11 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 6 — Validation & finish
 
-- [ ] `ng build` — no budget errors; compare bundle size to Phase 0 baseline (expect drop from zone.js removal)
-- [ ] `ng test --watch=false` — all specs pass (Vitest, no Chrome)
-- [ ] `npm start` — manual smoke: play/pause, volume, seek slider, card hover-highlight, library search filter, expand/collapse, playlist select → playback
-- [ ] Confirm `app.html` `<audio hidden>` element and the resolver-`new Audio()` flow still behave (no framework dependency changed here)
-- [ ] Update `AGENTS.md`: test runner (Vitest via `ng test --watch=false`), Angular v22, strictTemplates default, removed SSR files (if deleted), zoneless (zone.js uninstalled)
+- [x] `ng build` — no budget errors; **initial total 310.34 kB raw / 81.10 kB transfer vs Phase 0 baseline 382.85 kB raw / 104.11 kB (−19% raw with zone.js + SSR/HMR-hydration artifacts removed)**
+- [x] `ng test --watch=false` — all specs pass (Vitest, no Chrome) → **1 file / 2 tests, ~1.4 s**
+- [x] `npm start` — interactive smoke via Playwright: play (clock advances), pause (frozen), seek (request 60 s → 01:00), volume (0.5 → 1, `pi-volume-up`), next-track (Amor Sideral → Yeshua, duration 02:17 → 00:56), library search filter ("rap" → 1 card), playlist select → source change, sidebar expand/collapse (searcher + expanded section cycle) — **0 console errors/warnings**
+- [x] `app.html` `<audio hidden>` element + resolver `new Audio()` flow unchanged and working (drive-through of the above)
+- [x] `AGENTS.md` rewritten for Angular 22 (Vitest command, zoneless + explicit Eager policy, TS 6 pin, SSR removal note, branch convention)
 - [ ] Commit; open PR to `dev`
 
 ## Known breaking points
