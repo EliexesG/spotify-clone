@@ -11,7 +11,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { LibraryCardVariant } from './library-card.model';
+import { SourceCardVariant } from './source-card.model';
 import { MusicSource } from '../../../interfaces/music-source';
 import { PlaylistSource } from '../../../interfaces/playlist-source';
 import { CommonModule } from '@angular/common';
@@ -19,19 +19,19 @@ import { PlaylistPlayer } from '../../../services/playlist-player';
 import { MusicPlayer } from '../../../services/music-player';
 
 @Component({
-  selector: 'app-library-card',
+  selector: 'app-source-card',
   imports: [CommonModule],
-  templateUrl: './library-card.html',
+  templateUrl: './source-card.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './library-card.scss',
+  styleUrl: './source-card.scss',
 })
-export class LibraryCard {
+export class SourceCard {
   private readonly _playlistPlayer = inject(PlaylistPlayer);
   private readonly _musicPlayer = inject(MusicPlayer);
   private readonly _router = inject(Router);
 
   // * Inputs
-  variant = input<LibraryCardVariant>('with-description');
+  variant = input<SourceCardVariant>('with-description');
   source = input<PlaylistSource | MusicSource>();
 
   // * Computed

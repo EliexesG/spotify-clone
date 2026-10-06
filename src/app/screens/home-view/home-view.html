@@ -6,7 +6,7 @@
   } @else {
     <div class="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]">
       @for (playlist of playlists; track playlist.id) {
-        <app-library-card [source]="playlist" variant="big" />
+        <app-source-card [source]="playlist" variant="big" />
       }
     </div>
   }

@@ -27,7 +27,7 @@ describe('App', () => {
     const home = compiled.querySelector('app-home-view');
     expect(home?.querySelector('h2')?.textContent).toContain('Your library');
     // * Phase 2: the grid renders one big card per playlist
-    const gridCards = compiled.querySelectorAll('app-library-card .aspect-square');
+    const gridCards = compiled.querySelectorAll('app-source-card .aspect-square');
     expect(gridCards.length).toBeGreaterThan(0);
   });
 });

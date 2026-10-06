@@ -7,18 +7,18 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CrudPlaylist } from '../../../services/crud-playlist';
-import { LibraryCard } from '../library-card/library-card';
+import { SourceCard } from '../../ui/source-card/source-card';
 import { CommonModule } from '@angular/common';
 import { LibrarySearcher } from '../library-searcher/library-searcher';
 
 @Component({
-  selector: 'app-library-section-container',
-  imports: [LibraryCard, CommonModule, LibrarySearcher],
-  templateUrl: './library-section-container.html',
+  selector: 'app-library-section',
+  imports: [SourceCard, CommonModule, LibrarySearcher],
+  templateUrl: './library-section.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './library-section-container.scss',
+  styleUrl: './library-section.scss',
 })
-export class LibrarySectionContainer {
+export class LibrarySection {
   // * Services
   private readonly _crudPlaylist = inject(CrudPlaylist);
 

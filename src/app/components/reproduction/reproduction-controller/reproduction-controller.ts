@@ -9,7 +9,7 @@ import {
 import { MusicPlayer } from '../../../services/music-player';
 import { CommonModule } from '@angular/common';
 import { PlaylistPlayer } from '../../../services/playlist-player';
-import { SliderController } from '../slider-controller/slider-controller';
+import { SliderController } from '../../ui/slider-controller/slider-controller';
 
 @Component({
   selector: 'app-reproduction-controller',

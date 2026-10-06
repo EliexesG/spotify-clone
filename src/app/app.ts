@@ -1,5 +1,5 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { Scaffold } from './screens/scaffold/scaffold';
+import { Scaffold } from './components/layout/scaffold/scaffold';
 import { Title } from '@angular/platform-browser';
 
 @Component({

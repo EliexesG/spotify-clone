@@ -1,10 +1,10 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CrudPlaylist } from '../../services/crud-playlist';
-import { LibraryCard } from '../../components/library-section/library-card/library-card';
+import { SourceCard } from '../../components/ui/source-card/source-card';
 
 @Component({
   selector: 'app-home-view',
-  imports: [LibraryCard],
+  imports: [SourceCard],
   templateUrl: './home-view.html',
   styleUrl: './home-view.scss',
   changeDetection: ChangeDetectionStrategy.Eager,

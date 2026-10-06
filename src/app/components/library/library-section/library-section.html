@@ -1,6 +1,6 @@
 <section
   class="flex flex-col w-full h-full rounded-2xl bg-(--secondary) p-3 overflow-y-auto transition-all!"
-  [ngClass]="{ 'min-w-[500px]': expanded() }"
+  [ngClass]="{ 'min-w-125': expanded() }"
 >
   <!-- * Library Header -->
   <section
@@ -27,10 +27,10 @@
   <!-- * Library Content -->
   <section class="w-full flex flex-col justify-start align-middle">
     @for (playlist of filteredPlaylists(); track $index) {
-      <app-library-card
+      <app-source-card
         [source]="playlist"
         [variant]="expanded() ? 'with-description' : 'only-img'"
-      ></app-library-card>
+      ></app-source-card>
     }
   </section>
 </section>
