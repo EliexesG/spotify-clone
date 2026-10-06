@@ -92,6 +92,42 @@
 13. **Focus-visible absence** ✅ `d91a37b` — global `:focus-visible` ring; `outline-none` utilities no longer eat keyboard focus.
 14. **A11y pass remains open** (aria/roles/labels) — tracked for the accessibility work item; focus styling (13) landed as the first slice.
 
+## F. Spotify UI parity assessment (fetched 2026-10-06, live web player)
+
+> Reference: live `open.spotify.com` (a11y tree + screenshot, logged-out shell — full layout skeleton visible). Scores: structure / behavior / visual fidelity vs real UI.
+
+### Verdict table
+
+| Artifact | Structure | Behavior | Visual | Overall |
+|---|---|---|---|---|
+| `Scaffold` shell | 5/10 | n/a | 6/10 | half-done vs real |
+| `LibrarySectionContainer` | 7/10 | 7/10 | 6/10 | good skeleton |
+| `LibraryCard` | 8/10 | 8/10 | 7/10 | close |
+| `LibrarySearcher` | 7/10 | 8/10 | 6/10 | good mini version |
+| `ReproductionController` | 8/10 | 6/10 | 6/10 | close, wrong glyphs |
+| `SliderController` + highlight | 9/10 | 9/10 | 8/10 | most accurate piece |
+| Global theme tokens | 8/10 | — | 7/10 | near match |
+
+### Findings per artifact
+
+1. **Shell (`scaffold.html`)** — biggest structural gap. Real: global black top bar (logo, circular Home, pill search "What do you want to play?", Premium/Support/Download/Install/Sign up/Login) spanning everything; below it **three** rounded `#121212` panels on black with 8px gaps (Library / Main / Now-playing panel); full-width bottom player bar. Ours: header is the literal `"Header"` string inside the main column, right panel is the literal `"Reproduction List"`, panels use `rounded-2xl` (16px) vs Spotify's 8px. The `p-2` gap + black background are correct. Geometry ~70% there; top bar and third panel missing as components.
+2. **Library panel** — right idea, missing Spotify's second row. Real: heading + green "+" create button (the `pi-bars` burger on real Spotify toggles the resize rail, not collapse); filter-chips row (Playlists/Artists/Albums) above a search-icon + "Recents" sort row; 280px resizable width; legal-links footer; collapse-to-icon-rail. Ours: toggle-to-collapse with variant swap (similar spirit, different mechanic), searcher inline; `min-w-[500px]` vs real 280px.
+3. **`LibraryCard`** — semantics closest to real playlist rows: 48px cover (ours 56px), bold title + gray `Playlist • Owner` subtitle (same wording pattern), hover `#1f1f1f`, green playing title ✓. Differences: real floating play button sits at the row's right edge (ours overlays the image — that's Spotify's *home-card* pattern), and the playing row shows a green volume icon.
+4. **`LibrarySearcher`** — good micro-interaction (expand pill, outside-click close) but that pattern belongs to Spotify's top-bar search, not the sidebar; real sidebar pairs a search icon with a "Recents" sort control under filter chips.
+5. **`ReproductionController`** — layout matches (left cover/title/add-like, center controls + progress, right utilities). Real center: shuffle, prev, **white filled circle play**, next, **repeat** (off/all/one) — ours has replay-to-zero and a transparent scaled icon. Real right cluster is fully functional (queue, device, lyrics, mute, volume, fullscreen) — ours renders 6 decorative `<i>`s. Cover 64px vs real 56px (trivial).
+6. **Slider** — best piece: 4px bar, hidden→white hover thumb, gradient fill all match. Real grows to 6px on hover (one-line addition).
+7. **Theme tokens** — `#121212` ✓, hover `#1f1f1f` ✓, black base ✓, 8px gaps ✓. Nuances: modern brand green is `#1ED760` (`#1DB954` is legacy); subtitle gray is `#b3b3b3` (ours `text-gray-300`); panel radius 8px not 16px.
+
+### Parity gaps, ranked
+
+1. Global **top bar** component (literal `"Header"` today) — also feeds B3
+2. **Repeat** control (off/all/one) replacing/augmenting replay — B4
+3. Right **Now-playing panel** (literal `"Reproduction List"` today) — B1
+4. White-circle play button styling + `#1ED760` token bump
+5. Library "+" create + filter-chips/sort row; icon-rail collapse — pairs with C (playlist CRUD)
+6. Row-hover play button at row-right (move overlay from image)
+7. Panel radius 16px → 8px; subtitle gray `#b3b3b3`; slider 4px → 6px on hover
+
 ## Suggested build order (needs owner prioritization)
 
 1. Quick wins — D (dead code deletion) + risks #1 #2 #3 (correctness of core playback)
