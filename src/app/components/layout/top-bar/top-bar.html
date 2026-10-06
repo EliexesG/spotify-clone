@@ -1,0 +1,33 @@
+<section class="relative z-10 flex items-center justify-between h-16 px-4 bg-black shrink-0">
+  <!-- * Left cluster: menu (visual-only) + functional navigation history -->
+  <div class="flex items-center gap-2 text-(--muted)">
+    <span class="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-(--highlight)"><i class="pi pi-ellipsis-h"></i></span>
+    <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight)" (click)="back()"><i class="pi pi-chevron-left"></i></button>
+    <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight)" (click)="forward()"><i class="pi pi-chevron-right"></i></button>
+  </div>
+
+  <!-- * Center cluster: home circle (functional) + search pill (visual-only) -->
+  <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+    <button
+      class="w-10 h-10 rounded-full bg-(--highlight) flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+      (click)="goHome()"
+    >
+      <i class="pi pi-home"></i>
+    </button>
+    <div class="flex items-center search-pill-width h-10 rounded-full bg-(--highlight) text-(--muted) cursor-text">
+      <span class="ps-3"><i class="pi pi-search"></i></span>
+      <span class="px-2 text-sm whitespace-nowrap">What do you want to play?</span>
+      <span class="border-s border-white/20 h-6 mx-1"></span>
+      <span class="pe-2"><i class="pi pi-box"></i></span>
+    </div>
+  </div>
+
+  <!-- * Right cluster: notifications / social / account (visual-only) -->
+  <div class="flex items-center gap-3 text-(--muted)">
+    <span class="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-(--highlight)"><i class="pi pi-bell"></i></span>
+    <span class="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-(--highlight)"><i class="pi pi-users"></i></span>
+    <span class="w-10 h-10 rounded-full bg-(--highlight) flex items-center justify-center text-white cursor-pointer overflow-hidden">
+      <i class="pi pi-user"></i>
+    </span>
+  </div>
+</section>

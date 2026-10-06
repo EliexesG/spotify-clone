@@ -1,23 +1,26 @@
-<main class="w-full h-screen flex flex-col p-2 gap-2">
-  <!-- * Header Section -->
-  <header class="w-full h-10">Header</header>
-  <div class="w-full! grow flex gap-2">
-    <!-- * Library Section -->
-    <aside class="w-fit">
-      <app-library-section></app-library-section>
-    </aside>
-    <!-- * Main Content Section -->
-    <section class="grow rounded-2xl bg-(--secondary) overflow-y-auto">
-      <router-outlet></router-outlet>
-    </section>
-    <!-- * Now Playing Section -->
-    <aside class="w-80 shrink-0">
-      <app-now-playing-section></app-now-playing-section>
-    </aside>
-  </div>
+<div class="w-full h-screen flex flex-col">
+  <!-- * Top Bar (visual-only chrome) -->
+  <app-top-bar></app-top-bar>
 
-  <!-- * Reproduction Controllers Section -->
-  <section class="w-full h-20">
-    <app-reproduction-controller></app-reproduction-controller>
-  </section>
-</main>
+  <main class="w-full! grow flex flex-col p-2 gap-2 overflow-hidden min-h-0">
+    <div class="w-full! grow flex gap-2 overflow-hidden min-h-0">
+      <!-- * Library Section -->
+      <aside class="w-fit">
+        <app-library-section></app-library-section>
+      </aside>
+      <!-- * Main Content Section -->
+      <section class="grow rounded-2xl bg-(--secondary) overflow-y-auto min-w-0">
+        <router-outlet></router-outlet>
+      </section>
+      <!-- * Now Playing Section -->
+      <aside class="w-80 shrink-0">
+        <app-now-playing-section></app-now-playing-section>
+      </aside>
+    </div>
+
+    <!-- * Reproduction Controllers Section -->
+    <section class="w-full h-20 shrink-0">
+      <app-reproduction-controller></app-reproduction-controller>
+    </section>
+  </main>
+</div>

@@ -5,10 +5,11 @@ import { PlaylistPlayer } from '../../../services/playlist-player';
 import { CrudPlaylist } from '../../../services/crud-playlist';
 import { LibrarySection } from '../library-section/library-section';
 import { NowPlayingSection } from '../now-playing-section/now-playing-section';
+import { TopBar } from '../top-bar/top-bar';
 
 @Component({
   selector: 'app-scaffold',
-  imports: [RouterOutlet, ReproductionController, LibrarySection, NowPlayingSection],
+  imports: [RouterOutlet, ReproductionController, LibrarySection, NowPlayingSection, TopBar],
   templateUrl: './scaffold.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './scaffold.scss',

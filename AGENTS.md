@@ -9,12 +9,12 @@
 
 ## Scope (owner decision — read before adding UI)
 
-- The only core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual*: chrome like Premium/Support/Sign up, create-playlist "+", filter chips, legal links is replicated to look like Spotify and stays non-functional. Song lists/queue are clickable because they feed playback.
+- The only core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual*: chrome like Premium/Support/Sign up, create-playlist "+", filter chips, legal links is replicated to look like Spotify and stays non-functional. Song lists/queue are clickable because they feed playback. **Owner-approved exception:** the top-bar navigation cluster is functional (home `button` → `/`, back/forward arrows → `Location` history); all other top-bar chrome stays decorative.
 - `AUDIT.md` is the living reference: feature completeness, bug status, Spotify UI parity assessment (section F), and the visual-parity scope caveat.
 
 ## Architecture
 
-- Layers under `src/app/`: `screens/` (**routed pages only**, via `app.routes.ts`: `home-view`, `playlist-view`), `components/layout/` (shell panels composed by `scaffold`, not routed: `scaffold`, `library-section`, `now-playing-section` + upcoming `top-bar`), `components/reproduction/` (`reproduction-controller`), `components/ui/` (generic reusable, playlist+music agnostic: `source-card` + `source-card.model.ts`, `slider-controller`, `search-button`), `services/`, `interfaces/`, `directives/`.
+- Layers under `src/app/`: `screens/` (**routed pages only**, via `app.routes.ts`: `home-view`, `playlist-view`), `components/layout/` (shell panels composed by `scaffold`, not routed: `scaffold`, `top-bar`, `library-section`, `now-playing-section`), `components/reproduction/` (`reproduction-controller`), `components/ui/` (generic reusable, playlist+music agnostic: `source-card` + `source-card.model.ts`, `slider-controller`, `search-button`), `services/`, `interfaces/`, `directives/`.
 - Root `App` renders `Scaffold` (from `components/layout/`); routing drives the center `router-outlet` (`''` → home grid, `playlist/:id` → detail).
 - Zoneless since the v22 upgrade: no zone.js anywhere. All template state must be signals (`signal`/`computed`/`effect`, `takeUntilDestroyed`), not stores; every component explicitly pins `ChangeDetectionStrategy.Eager` (deliberate — keep it when adding components unless consciously migrating to OnPush).
 - Audio playback: `AudioResolver` wraps `HTMLAudioElement`s behind signals/BehaviorSubject (playing/volume/duration/error/buffering) and exposes an `audioEnded` stream — it's the only place `new Audio(...)` lives, and media handlers must use `addEventListener` (never overwrite `onended` etc.). `MusicPlayer` and `PlaylistPlayer` are facades over it.
