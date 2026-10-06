@@ -101,6 +101,8 @@
       [max]="duration()"
       [value]="currentTime().currentTime"
       [disabled]="disableReproductionControls()"
+      (dragStarted)="musicPlayer.beginScrub()"
+      (dragEnded)="musicPlayer.endScrub($event)"
       (valueChanged)="musicPlayer.changeCurrentTime($event)"
     />
     <p class="m-0 text-xs font-light">{{ durationString() }}</p>

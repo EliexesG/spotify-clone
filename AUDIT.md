@@ -13,7 +13,7 @@
 | Finished | 12 | Full transport, shuffle, queue auto-advance, library sidebar + search |
 | Half-done / incomplete | 13 | Queue panel is a literal string; repeat modes; mute; header is text |
 | Undone / not started | 12 | Routing, CRUD playlists, likes, persistence, responsive, a11y |
-| Risks / bugs | 14 | id-space collision between playlists & songs; onended double-owner |
+| Risks / bugs | 17 (14 + 3 scrub round) | id-space collision; onended double-owner; scrub-commit race |
 
 ## A. Finished ✔
 
@@ -23,12 +23,12 @@
 - **Card → queue load + play**, resume when clicking current queue (`library-card.ts:97-118`, `playlist-player.ts:137-152`)
 - **Transport bar** — play/pause/next/prev/restart with disabled states (`reproduction-controller.html:42-81`)
 - **Shuffle** — toggle + green indicator + already-played bookkeeping (`reproduction-controller.html:28-41`, `playlist-player.ts:197-199`)
-- **Seek + duration + progress-fill slider** with hover thumb (`reproduction-controller.html:83-94`, `slider-controller.scss`, `highlight-slider.ts`)
+- **Seek + duration + progress-fill slider** with hover thumb; **silent scrubbing** (drag = pause + preview, release = commit + resume) (`reproduction-controller.html:83-94`, `audio-resolver.ts beginScrub/endScrub`)
 - **Volume** — slider + reactive icon off/down/up (`reproduction-controller.html:103-111`)
 - **Auto-advance on song end** (`playlist-player.ts:63-71`)
 - **Initial preload** of playlist `'1'` first song (`scaffold.ts:20-22`)
 - **Signal-based audio plumbing** — single `new Audio(...)` site (`audio-resolver.ts:17,149-155`)
-- **Build/test infra** — Angular 22.2 zoneless, Vitest unit tests, budgets enforced
+- **Build/test infra** — Angular 22.2 zoneless, Vitest unit tests (**17 specs / 3 files**), budgets enforced
 
 ## B. Half-done / incomplete ◐
 
@@ -39,11 +39,11 @@
 5. **Mute** — volume icon is reactive but not clickable (`reproduction-controller.html:103`).
 6. **Decorative icon cluster** — mobile/mic/bars/headphones/maximize/expand and minus/plus-circle icons render but are plain `<i>`, no handlers/semantics (`reproduction-controller.html:19-20,99-113`).
 7. **`big` card variant** — declared in `library-card.model.ts:1`, template is an empty `<div>` stub (`library-card.html:50-51`); no grid rendering path.
-8. **`background` input, `colorLeft`/`colorRight` inputs** — bound nowhere; defaults only (`library-card.ts:33`, `highlight-slider.ts:17-18`).
+8. ~~**Unused colorInput slots**~~ ✅ `d91a37b`+color-token round — `colorLeft/colorRight` now bound via `slider-controller.html` (`[appHighlightSliderColorLeft/Right]`); `background` input on `LibraryCard` still unbound (small cleanup).
 9. **`alreadyPlayedMusicIndexes`** — maintained by shuffle, exposed but never consumed by UI (`playlist-player.ts:46-48`).
 10. **Search UX** — no empty-result state, no result count, no persisted query (`library-section-container.ts:33-41`).
 11. **Volume slider never disabled** even with no source loaded; transport disabled logic exists only for it (`reproduction-controller.html:104-111`).
-12. **Test suite** — one shallow spec asserting a stub string; player/service logic untested (`app.spec.ts:21`).
+12. ~~**Test suite** — shallow~~ → superseded: service logic now covered (see Round 2 + `audio-resolver.spec.ts`); UI component coverage still missing.
 13. **README** — stale (Karma, e2e, CLI 20.1.4); `AGENTS.md` is accurate but README is not.
 
 ## C. Undone ✗ (*inferred* unless noted)
@@ -94,6 +94,21 @@
 13. **Focus-visible absence** ✅ `d91a37b` — global `:focus-visible` ring; `outline-none` utilities no longer eat keyboard focus.
 14. **A11y pass remains open** (aria/roles/labels) — tracked for the accessibility work item; focus styling (13) landed as the first slice.
 
+### Round 2 — scrubbing behavior (2026-10-06, on `dev`, owner commits)
+
+New feature-behavior request ("no sound while moving the seek bar") surfaced three sequential defects; all fixed together (uncommitted in working tree, owner reviews/commits):
+
+15. ~~**Scrubbing produced sound** while dragging~~ ✅ — `AudioResolver.beginScrub()/endScrub()`: drag pauses playback (remembering prior state), the current-time signal becomes preview-only (`timeupdate`-independent), release commits once and resumes. `changeAudioCurrentTime` guard in the seek effect.
+16. ~~**Direct jump (no drag) needed several clicks**~~ ✅ — clicks with no value change (on/near the thumb) fired `pointerdown` but never `input`/`change`, leaving the player stuck in scrub-paused mode. Fix: commit also on `pointerup` + `pointercancel` (`slider-controller.html`), with `endScrub()` idempotent.
+17. ~~**Click jump reverted to the pre-click time** (race)~~ ✅ — a stale in-flight `timeupdate` (queued before the scrub pause, fires during the human-speed press) overwrote the preview signal, so `endScrub` committed the OLD position. Three-layer fix: (a) `timeupdate` listener ignores events while scrubbing; (b) `dragEnded` now carries the element's committed `valueAsNumber` from the DOM (`slider-controller commit()`) — commit independent of preview signal; (c) `endScrub(commitAt?)` seeks directly/synchronously (skipping when position unchanged — no seek-to-T0 churn) before resuming. Verified in-browser with 400ms holds (the race timing) at 3 positions + full-drag holds: preview stable, first-press commitment, correct resume every time. 17/17 tests incl. `audio-resolver.spec.ts` race regressions.
+
+### Color-token round (2026-10-06, same working tree)
+
+- `--primary` `#1db954` → **`#1ed760`** (modern Spotify green); new tokens `--muted` (#b3b3b3) and `--track` (#4d4d4d) in `src/styles.css`
+- Subtitle grays moved to `text-(--muted)` (`library-card`, `reproduction-controller` artist/title subtitles); slider track `gray` → `var(--track)` (`slider-controller.scss`); `colorRight` defaults → `var(--track)` (`slider-controller.ts`, `highlight-slider.ts`)
+- Migrated remaining legacy `bg-[var(--x)]`/`text-[var(--x)]` to Tailwind v4 `(--x)` form across 5 templates/strings — none left
+- `AGENTS.md` updated: theming section (tokens + change-colors-only-there rule), `npm run dev` rename, specs list, **never-kill-owner-dev-server rule**
+
 ## F. Spotify UI parity assessment (fetched 2026-10-06, live web player)
 
 > Reference: live `open.spotify.com` (a11y tree + screenshot, logged-out shell — full layout skeleton visible). Scores: structure / behavior / visual fidelity vs real UI.
@@ -120,17 +135,17 @@
 4. **`LibrarySearcher`** — good micro-interaction (expand pill, outside-click close) but that pattern belongs to Spotify's top-bar search, not the sidebar; real sidebar pairs a search icon with a "Recents" sort control under filter chips.
 5. **`ReproductionController`** — layout matches (left cover/title/add-like, center controls + progress, right utilities). Real center: shuffle, prev, **white filled circle play**, next, **repeat** (off/all/one) — ours has replay-to-zero and a transparent scaled icon. Real right cluster is fully functional (queue, device, lyrics, mute, volume, fullscreen) — ours renders 6 decorative `<i>`s. Cover 64px vs real 56px (trivial).
 6. **Slider** — best piece: 4px bar, hidden→white hover thumb, gradient fill all match. Real grows to 6px on hover (one-line addition).
-7. **Theme tokens** — `#121212` ✓, hover `#1f1f1f` ✓, black base ✓, 8px gaps ✓. Nuances: modern brand green is `#1ED760` (`#1DB954` is legacy); subtitle gray is `#b3b3b3` (ours `text-gray-300`); panel radius 8px not 16px.
+7. **Theme tokens** — `#121212` ✓, hover `#1f1f1f` ✓, black base ✓, 8px gaps ✓. Nuances: modern brand green is `#1ED760` (`#1DB954` is legacy); subtitle gray is `#b3b3b3` (ours `text-gray-300`); panel radius 8px not 16px. *(Update 2026-10-06: green → `#1ed760` and `--muted`/`--track` tokens landed; subtitles migrated to `--muted`; remaining `text-gray-*` usages are disabled/fallback states only; panel radius still 16px.)*
 
 ### Parity gaps, ranked
 
 1. Global **top bar** component (literal `"Header"` today) — also feeds B3
 2. **Repeat** control (off/all/one) replacing/augmenting replay — B4
 3. Right **Now-playing panel** (literal `"Reproduction List"` today) — B1
-4. White-circle play button styling + `#1ED760` token bump
-5. Library "+" create + filter-chips/sort row; icon-rail collapse — pairs with C (playlist CRUD)
+4. ~~White-circle play button styling + `#1ED760` token bump~~ → **token bump ✅ done** (color round); white-circle play styling still open
+5. Library "+" create + filter-chips/sort row; icon-rail collapse — pairs with C (playlist CRUD); visual-only per scope caveat
 6. Row-hover play button at row-right (move overlay from image)
-7. Panel radius 16px → 8px; subtitle gray `#b3b3b3`; slider 4px → 6px on hover
+7. Panel radius 16px → 8px; ~~subtitle gray `#b3b3b3`~~ (**✅ done** — `--muted` token); slider 4px → 6px on hover (open)
 
 ## Suggested build order (needs owner prioritization)
 

@@ -57,6 +57,24 @@ export class MusicPlayer {
     this._audioResolver.changeAudioCurrentTime(seconds);
   }
 
+  /**
+   * Begins a seek-bar scrub: pauses playback (remembering its state) and
+   * switches the current time into preview-only mode until endScrub().
+   */
+  beginScrub() {
+    this._audioResolver.beginScrub();
+  }
+
+  /**
+   * Ends a seek-bar scrub: seeks to the committed position and resumes
+   * playback when it was playing before the scrub began.
+   *
+   * @param commitAt - The committed slider value at release (optional).
+   */
+  endScrub(commitAt?: number) {
+    this._audioResolver.endScrub(commitAt);
+  }
+
   changeVolume(volume: number) {
     this._audioResolver.changeAudioVolume(volume);
   }

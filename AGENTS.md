@@ -4,7 +4,7 @@
 
 - `npm run dev` — dev server at http://localhost:4200 (Angular 22, standalone components, no NgModules, zoneless).
 - `ng build` — use this as the verification step (typecheck + strict template checks; no separate lint/tsc script). Fails on bundle budgets: initial 500kB warn / 1MB error; component styles 4kB warn / 8kB error — large SCSS files break the production build.
-- `npx ng test --watch=false` — Vitest via the `@angular/build:unit-test` builder (jsdom environment). No Chrome needed. Specs: `src/app/app.spec.ts` and `src/app/services/playlist-player.spec.ts`; schematics are configured with `skipTests: true` so generated components/directives/pipes/services produce no spec files.
+- `npx ng test --watch=false` — Vitest via the `@angular/build:unit-test` builder (jsdom environment). No Chrome needed. Specs: `src/app/app.spec.ts`, `src/app/services/playlist-player.spec.ts`, `src/app/services/audio-resolver.spec.ts`; schematics are configured with `skipTests: true` so generated components/directives/pipes/services produce no spec files.
 - No lint config or script. Prettier is configured in `package.json` (HTML files use the `angular` parser).
 
 ## Scope (owner decision — read before adding UI)
@@ -34,4 +34,5 @@
 - Angular 22 naming: no `.component`/`.service` suffixes (`app.ts`, `music-player.ts`). `ng generate component <name>` creates the folder with `.ts`/`.html`/`.scss`.
 - TypeScript 6.x required by v22 — keep `~6.0` pinned; `@types/node` tracks the installed Node major (currently ^26, Node 20 not supported by v22).
 - SSR was removed entirely (files, deps, scripts, hydration) — don't reintroduce `main.server.ts`/`@angular/ssr` unless intended; re-enable path is `ng add @angular/ssr`.
+- **Never stop/kill a running dev server** — the owner runs `npm run dev` themselves and restarting it constantly is disruptive. Start one only if none is up; leave whatever is listening alone.
 - Branches: default branch `main`; active development happens on `dev`.

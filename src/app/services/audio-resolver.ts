@@ -28,6 +28,13 @@ export class AudioResolver {
   });
   private readonly _audioError = signal<string | null>(null);
   private readonly _audioBuffering = signal(false);
+  private readonly _scrubbing = signal(false);
+
+  /**
+   * Whether the audio was playing when the scrub began, so playback
+   * can resume on scrub end.
+   */
+  private _resumeOnScrubEnd = false;
 
   /**
    * Listeners attached to the current audio element, kept as
@@ -120,6 +127,10 @@ export class AudioResolver {
 
       if (!audio || audioCurrentTime.cause === 'reproduction') return;
 
+      // * While scrubbing the signal only previews the dragged position:
+      // * the element must not seek (that is what makes the bar "sound")
+      if (this._scrubbing()) return;
+
       audio.currentTime = audioCurrentTime.currentTime;
     });
   }
@@ -154,6 +165,10 @@ export class AudioResolver {
       };
 
       listener('timeupdate', () => {
+        // * While scrubbing the preview owns the UI: stale in-flight updates
+        // * (queued before the scrub pause) would clobber the dragged position
+        if (this._scrubbing()) return;
+
         this._audioCurrentTime.set({
           currentTime: el.currentTime,
           cause: 'reproduction',
@@ -300,11 +315,60 @@ export class AudioResolver {
   }
 
   /**
+   * Begins a scrub (seek-bar drag).
+   *
+   * Remembers whether the audio was playing, pauses it so nothing sounds
+   * while the user moves the bar, and switches the current-time signal into
+   * preview-only mode (the seek effect stops writing to the element).
+   */
+  beginScrub() {
+    if (this._scrubbing()) return;
+
+    this._resumeOnScrubEnd = this._audioReproducing();
+
+    if (this._resumeOnScrubEnd) this.pauseAudio();
+
+    this._scrubbing.set(true);
+  }
+
+  /**
+   * Ends a scrub (seek-bar release).
+   *
+   * Seeks to the committed position once — directly and synchronously, before
+   * any resume — and resumes playback when the audio was playing before the
+   * scrub began. When the committed position equals the element position
+   * (e.g. a click with no value change) it just resumes. Safe no-op when no
+   * scrub is active.
+   *
+   * @param commitAt - The committed slider value at release. Falls back to
+   *                   the last previewed position when omitted.
+   */
+  endScrub(commitAt?: number) {
+    if (!this._scrubbing()) return;
+
+    this._scrubbing.set(false);
+
+    const audio = this._audio.getValue();
+    const target = commitAt ?? this._audioCurrentTime().currentTime;
+
+    if (audio && Math.abs(audio.currentTime - target) > 0.01) {
+      this._audioCurrentTime.set({ currentTime: target, cause: 'controller' });
+      audio.currentTime = target;
+    }
+
+    if (this._resumeOnScrubEnd) {
+      this._resumeOnScrubEnd = false;
+      this.reproduceAudio();
+    }
+  }
+
+  /**
    * Changes the current time of the audio to the given seconds.
    *
    * This function updates the internal current time signal to the given
    * seconds, and triggers the audio element to seek to that time if it is
-   * not already at that time.
+   * not already at that time. While scrubbing it only previews the position
+   * (the actual seek happens on endScrub).
    *
    * @param seconds - The new time in seconds to be set as the current time.
    * @throws {Error} If the given time is outside the range of 0 to the duration of the audio.
