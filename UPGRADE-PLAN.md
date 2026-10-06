@@ -68,11 +68,11 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 5 — Post-migration review
 
-- [ ] Decide on `Eager` pins: v22's default is `OnPush`; all components here are signal-driven, so either keep the migration's explicit `Eager` or drop the property to adopt `OnPush`. Adopt `OnPush` (objective of the upgrade) — verify each component renders/updates (smoke test `npm start`)
-- [ ] Prune now-optional `CommonModule` imports where templates don't use NgIf/NgFor/NgStyle etc. (all use built-in control flow `@if/@for/@let` — likely all removable) and `provideHttpClient` (unused by any service)
-- [ ] Deprecated/default-changed options to verify in config: `strictTemplates` is now default — remove explicit opt-out if migration added one; keep budgets as-is unless warned
-- [ ] Clean stale SSR artifacts (optional but recommended since `ssr:false` and `serve:ssr:spotify-clone` script points to a bundle never emitted): delete `src/main.server.ts`, `src/server.ts`, `src/app/app.config.server.ts`, `src/app/app.routes.server.ts`, remove `mainServer`-related angular.json entries and the `serve:ssr:*` script — or keep and fix if SSR is planned
-- [ ] Update `@types/node` to match Node major (currently `^20` → `^24`/`^26` compatible set) and confirm `@types/express` needed only if server.ts kept
+- [x] `Eager` pins decision → **kept (user decision); all 8 components retain `ChangeDetectionStrategy.Eager` explicitly — OnPush default adoption deferred to a future pass**
+- [x] Prune `CommonModule`/`provideHttpClient` → **`CommonModule` KEPT: all 4 components genuinely use `ngClass`/`NgTemplateOutlet` (graph-verified, not merely imported). `provideHttpClient(withFetch())` deleted — zero HttpClient injectors in the app**
+- [x] Deprecated/default-changed options verified → **no `strictTemplates: false` was ever added (never set in tsconfig); extended-diagnostic `suppress` blocks removed from `tsconfig.app.json` + `tsconfig.spec.json` — production build clean with checks active**
+- [x] Stale SSR artifacts → **deleted (user-approved): `src/main.server.ts`, `src/server.ts`, `src/app/app.config.server.ts`, `src/app/app.routes.server.ts`; `server`/`prerender`/`ssr` options removed from angular.json; `serve:ssr:*` script removed; `provideClientHydration(...)` provider + `ngSkipHydration` attribute removed (no-ops without SSR); deps `@angular/ssr`, `@angular/platform-server`, `express`, `@types/express` uninstalled. Re-enable path: `ng add @angular/ssr`**
+- [x] `@types/node` → **`^26.6.4` (matches Node v26.5); `@types/express` removed with server.ts**
 
 ## Phase 6 — Validation & finish
 
