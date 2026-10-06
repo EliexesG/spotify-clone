@@ -4,10 +4,11 @@ import { ReproductionController } from '../../reproduction/reproduction-controll
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { CrudPlaylist } from '../../../services/crud-playlist';
 import { LibrarySection } from '../library-section/library-section';
+import { NowPlayingSection } from '../now-playing-section/now-playing-section';
 
 @Component({
   selector: 'app-scaffold',
-  imports: [RouterOutlet, ReproductionController, LibrarySection],
+  imports: [RouterOutlet, ReproductionController, LibrarySection, NowPlayingSection],
   templateUrl: './scaffold.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './scaffold.scss',
