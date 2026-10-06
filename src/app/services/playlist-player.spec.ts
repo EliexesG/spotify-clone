@@ -28,7 +28,9 @@ describe('PlaylistPlayer', () => {
 
   beforeEach(() => {
     // * jsdom doesn't implement media playback; stub to keep the output clean
-    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(() => ({} as Promise<void>));
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(
+      () => ({}) as Promise<void>,
+    );
     vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
 
     TestBed.configureTestingModule({});

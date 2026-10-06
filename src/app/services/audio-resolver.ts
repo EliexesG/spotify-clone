@@ -161,7 +161,11 @@ export class AudioResolver {
       const listener = (type: string, handler: CallableFunction) => {
         const typedHandler = handler as EventListener;
         el.addEventListener(type, typedHandler);
-        this._currentListeners.push({ element: el, type, handler: typedHandler });
+        this._currentListeners.push({
+          element: el,
+          type,
+          handler: typedHandler,
+        });
       };
 
       listener('timeupdate', () => {

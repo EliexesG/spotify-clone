@@ -17,7 +17,9 @@ describe('AudioResolver (scrub)', () => {
     );
     vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
     // * Fixed duration so changeAudioCurrentTime accepts in-range seconds
-    vi.spyOn(HTMLMediaElement.prototype, 'duration', 'get').mockReturnValue(180);
+    vi.spyOn(HTMLMediaElement.prototype, 'duration', 'get').mockReturnValue(
+      180,
+    );
 
     TestBed.configureTestingModule({});
     resolver = TestBed.inject(AudioResolver);
@@ -25,9 +27,7 @@ describe('AudioResolver (scrub)', () => {
 
     // * Simulate a loaded media element: the canplay listener feeds the
     // * duration signal that changeAudioCurrentTime validates against
-    (resolver as any)._audio
-      .getValue()
-      .dispatchEvent(new Event('canplay'));
+    (resolver as any)._audio.getValue().dispatchEvent(new Event('canplay'));
   });
 
   it('seeks immediately when the time changes without scrubbing (keyboard path)', async () => {
@@ -127,7 +127,10 @@ describe('AudioResolver (scrub)', () => {
 
     Object.defineProperty(audio, 'currentTime', {
       get: () => original,
-      set: Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'currentTime')!.set!,
+      set: Object.getOwnPropertyDescriptor(
+        HTMLMediaElement.prototype,
+        'currentTime',
+      )!.set!,
       configurable: true,
     });
   });

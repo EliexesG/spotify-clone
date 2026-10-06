@@ -1,4 +1,11 @@
-import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CrudPlaylist } from '../../services/crud-playlist';
@@ -44,7 +51,9 @@ export class PlaylistView {
 
   songCount = computed(() => this.songs().length);
 
-  totalDuration = computed(() => this.songs().reduce((acc, track) => acc + (track.durationSeconds ?? 0), 0));
+  totalDuration = computed(() =>
+    this.songs().reduce((acc, track) => acc + (track.durationSeconds ?? 0), 0),
+  );
 
   isCurrentTrack(track: MusicSource) {
     return this.currentTrack()?.id === track.id;
@@ -65,9 +74,7 @@ export class PlaylistView {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.round((seconds % 3600) / 60);
 
-    return hours > 0
-      ? `${hours}hr ${minutes} min`
-      : `${minutes} min`;
+    return hours > 0 ? `${hours}hr ${minutes} min` : `${minutes} min`;
   });
 
   formatTrackDuration(seconds: number | undefined) {

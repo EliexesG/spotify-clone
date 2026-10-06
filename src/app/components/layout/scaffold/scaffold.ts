@@ -9,7 +9,13 @@ import { TopBar } from '../top-bar/top-bar';
 
 @Component({
   selector: 'app-scaffold',
-  imports: [RouterOutlet, ReproductionController, LibrarySection, NowPlayingSection, TopBar],
+  imports: [
+    RouterOutlet,
+    ReproductionController,
+    LibrarySection,
+    NowPlayingSection,
+    TopBar,
+  ],
   templateUrl: './scaffold.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './scaffold.scss',
