@@ -15,7 +15,7 @@
 
 ## Scope (owner decision — read before adding UI)
 
-- The only core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual*: chrome like Premium/Support/Sign up, create-playlist "+", filter chips, legal links is replicated to look like Spotify and stays non-functional. Song lists/queue are clickable because they feed playback. **Owner-approved exception:** the top-bar navigation cluster is functional (home `button` → `/`, back/forward arrows → `Location` history); all other top-bar chrome stays decorative.
+- This is **only a visual clone with a minimal music implementation**: the single core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). **No CRUD of any kind** (no POST/PUT/DELETE, no API calls, no backend, no persistence) — the static JSON is read-only data. Everything else is visual chrome: Premium/Support/Sign up, create-playlist "+", filter chips, legal links look like Spotify and never do anything. Song lists/queue are clickable only because they feed playback. **Owner-approved exception:** the top-bar navigation cluster is functional (home `button` → `/`, back/forward arrows → `Location` history).
 - `AUDIT.md` is the living reference: feature completeness, bug status, Spotify UI parity assessment (section F), and the visual-parity scope caveat.
 
 ## Architecture
