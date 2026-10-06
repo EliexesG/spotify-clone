@@ -1,4 +1,11 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  model,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CrudPlaylist } from '../../../services/crud-playlist';
 import { LibraryCard } from '../library-card/library-card';
 import { CommonModule } from '@angular/common';
@@ -8,6 +15,7 @@ import { LibrarySearcher } from '../library-searcher/library-searcher';
   selector: 'app-library-section-container',
   imports: [LibraryCard, CommonModule, LibrarySearcher],
   templateUrl: './library-section-container.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './library-section-container.scss',
 })
 export class LibrarySectionContainer {

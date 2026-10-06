@@ -1,4 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { HighlightSlider } from '../../../directives/highlight-slider';
 
 @Component({
@@ -6,6 +11,7 @@ import { HighlightSlider } from '../../../directives/highlight-slider';
   imports: [HighlightSlider],
   host: { class: 'w-full' },
   templateUrl: './slider-controller.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './slider-controller.scss',
 })
 export class SliderController {

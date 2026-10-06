@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ReproductionController } from '../../components/reproduction/reproduction-controller/reproduction-controller';
 import { PlaylistPlayer } from '../../services/playlist-player';
@@ -9,6 +9,7 @@ import { LibrarySectionContainer } from '../../components/library-section/librar
   selector: 'app-scaffold',
   imports: [RouterOutlet, ReproductionController, LibrarySectionContainer],
   templateUrl: './scaffold.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './scaffold.scss',
 })
 export class Scaffold {

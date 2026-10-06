@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:spotify-clone": "node dist/spotify-clone/server/server.mjs"
+    "test": "ng test"
   },
   "prettier": {
     "overrides": [
@@ -21,37 +20,27 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^20.1.0",
-    "@angular/compiler": "^20.1.0",
-    "@angular/core": "^20.1.0",
-    "@angular/forms": "^20.1.0",
-    "@angular/platform-browser": "^20.1.0",
-    "@angular/platform-server": "^20.1.0",
-    "@angular/router": "^20.1.0",
-    "@angular/ssr": "^20.1.4",
+    "@angular/common": "^22.2.1",
+    "@angular/compiler": "^22.2.1",
+    "@angular/core": "^22.2.1",
+    "@angular/forms": "^22.2.1",
+    "@angular/platform-browser": "^22.2.1",
+    "@angular/router": "^22.2.1",
     "@tailwindcss/postcss": "^4.1.11",
-    "express": "^5.1.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "primeicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.11",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.1.4",
-    "@angular/cli": "^20.1.4",
-    "@angular/compiler-cli": "^20.1.0",
-    "@types/express": "^5.0.1",
-    "@types/jasmine": "~5.1.0",
-    "@types/node": "^20.17.19",
-    "jasmine-core": "~5.8.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2"
+    "@angular/build": "^22.2.1",
+    "@angular/cli": "^22.2.1",
+    "@angular/compiler-cli": "^22.2.1",
+    "@types/node": "^26.6.4",
+    "jsdom": "^30.1.2",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.0"
   }
 }
