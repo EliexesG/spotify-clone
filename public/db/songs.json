@@ -4,34 +4,49 @@
     "img": "https://cdn2.suno.ai/image_large_3880b9af-996c-426f-9af1-a8fe3d793322.jpeg",
     "title": "Amor Sideral",
     "artist": "EliexesG",
-    "url": "songs/amor_sideral.wav"
+    "url": "songs/amor_sideral.wav",
+    "album": "EliexesG - Amor Sideral",
+    "dateAdded": "",
+    "durationSeconds": 137
   },
   {
     "id": "2",
     "img": "https://cdn2.suno.ai/image_large_75401805-4595-43f1-a9e6-d0b59956f127.jpeg",
     "title": "Yeshua",
     "artist": "EliexesG",
-    "url": "songs/yeshua.wav"
+    "url": "songs/yeshua.wav",
+    "album": "",
+    "dateAdded": "",
+    "durationSeconds": 56
   },
   {
     "id": "3",
     "img": "https://cdn2.suno.ai/image_large_e28e3489-bcc1-4132-ba37-d98f90914d2b.jpeg",
     "title": "¿Por qué?",
     "artist": "EliexesG",
-    "url": "songs/por_que.wav"
+    "url": "songs/por_que.wav",
+    "album": "",
+    "dateAdded": "",
+    "durationSeconds": 151
   },
   {
     "id": "4",
     "img": "https://cdn2.suno.ai/image_large_4086c3c3-d1e2-43f7-8d82-25adcb7f455e.jpeg",
     "title": "Rappers de Segunda",
     "artist": "EliexesG",
-    "url": "songs/rappers_de_segunda.wav"
+    "url": "songs/rappers_de_segunda.wav",
+    "album": "",
+    "dateAdded": "",
+    "durationSeconds": 90
   },
   {
     "id": "5",
     "img": "https://cdn2.suno.ai/image_large_89c0b831-2a0b-460f-834e-4d6b8ada5544.jpeg",
     "title": "Space",
     "artist": "EliexesG",
-    "url": "songs/space.wav"
+    "url": "songs/space.wav",
+    "album": "",
+    "dateAdded": "",
+    "durationSeconds": 119
   }
 ]

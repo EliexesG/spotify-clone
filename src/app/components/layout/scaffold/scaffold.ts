@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { ReproductionController } from '../../reproduction/reproduction-controller/reproduction-controller';
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { CrudPlaylist } from '../../../services/crud-playlist';
-import { LibrarySection } from '../../library/library-section/library-section';
+import { LibrarySection } from '../library-section/library-section';
 
 @Component({
   selector: 'app-scaffold',

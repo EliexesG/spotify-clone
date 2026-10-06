@@ -9,11 +9,11 @@ import {
 import { CrudPlaylist } from '../../../services/crud-playlist';
 import { SourceCard } from '../../ui/source-card/source-card';
 import { CommonModule } from '@angular/common';
-import { LibrarySearcher } from '../library-searcher/library-searcher';
+import { SearchButton } from '../../ui/search-button/search-button';
 
 @Component({
   selector: 'app-library-section',
-  imports: [SourceCard, CommonModule, LibrarySearcher],
+  imports: [SourceCard, CommonModule, SearchButton],
   templateUrl: './library-section.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './library-section.scss',

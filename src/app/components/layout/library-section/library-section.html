@@ -18,9 +18,10 @@
   <!-- * Library Searcher -->
   @if (expanded()) {
     <section class="w-fit p-2">
-      <app-library-searcher
+      <app-search-button
+        placeholder="Search in your library"
         (searchText)="textSearch.set($event)"
-      ></app-library-searcher>
+      ></app-search-button>
     </section>
   }
 

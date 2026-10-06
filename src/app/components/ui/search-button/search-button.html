@@ -11,7 +11,7 @@
     [hidden]="!opened()"
     #input
     type="text"
-    placeholder="Search in your library"
+    [placeholder]="placeholder()"
     [(ngModel)]="searchTextModel"
     class="outline-none bg-transparent text-white placeholder:text-white w-full"
     name="search"

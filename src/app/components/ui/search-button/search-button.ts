@@ -9,20 +9,23 @@ import {
   output,
   signal,
   ChangeDetectionStrategy,
+  input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-library-searcher',
+  selector: 'app-search-button',
   imports: [CommonModule, FormsModule],
-  templateUrl: './library-searcher.html',
+  templateUrl: './search-button.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './library-searcher.scss',
+  styleUrl: './search-button.scss',
 })
-export class LibrarySearcher {
+export class SearchButton {
   opened = signal(false);
   searchTextModel = model('');
   searchText = output<string>();
+  /** Site-provided label; defaults to the top-bar search wording */
+  placeholder = input('What do you want to play?');
   private readonly _ref = inject(ElementRef);
 
   constructor() {

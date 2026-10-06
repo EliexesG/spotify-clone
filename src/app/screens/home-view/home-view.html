@@ -4,7 +4,7 @@
   @if (playlists.length === 0) {
     <p class="text-(--muted)">No playlists yet.</p>
   } @else {
-    <div class="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(180px,1fr))]">
+    <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
       @for (playlist of playlists; track playlist.id) {
         <app-source-card [source]="playlist" variant="big" />
       }
