@@ -1,4 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MusicPlayer } from '../../../services/music-player';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +15,7 @@ import { SliderController } from '../slider-controller/slider-controller';
   imports: [CommonModule, FormsModule, SliderController],
   host: { class: 'flex items-center h-full w-full p-4' },
   templateUrl: './reproduction-controller.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './reproduction-controller.scss',
 })
 export class ReproductionController {

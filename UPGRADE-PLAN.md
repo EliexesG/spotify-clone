@@ -47,14 +47,16 @@ Node v26.5.0 (supported). TypeScript 5.8 → 6.0. Work branch off `dev`.
 
 ## Phase 3 — v21 → v22
 
-- [ ] `npx ng update @angular/cli@22 @angular/core@22`
-- [ ] Expect these automatic migrations; review each in the diff:
-  - `withFetch()` removed from `provideHttpClient` (fetch is now the default)
-  - `ChangeDetectionStrategy.Eager` explicitly added to components without a strategy; `Default` renamed → `Eager`
-  - Optional `withNoIncrementalHydration()` may be added to `provideClientHydration` if not opted into incremental hydration
-  - `$safeNavigationMigration()` wrappers only if templates rely on pre-v22 `?.` semantics — none known in this app; confirm in diff
-- [ ] Confirm TypeScript landed on 6.x: `npx tsc --version` (else fix `npm i -D typescript@^6.0`)
-- [ ] `ng build` — fix compile errors
+- [x] `npx ng update @angular/cli@22 @angular/core@22` → **Angular 22.2.1**
+- [x] Expect these automatic migrations; review each in the diff:
+  - ~~`withFetch()` removed from `provideHttpClient`~~ → **installer left `withFetch()` in place (deprecated, still the default); pruning deferred to Phase 5**
+  - `ChangeDetectionStrategy.Eager` explicitly added to components without a strategy; `Default` renamed → `Eager` → **8 components updated, no `Default` identifiers used**
+  - Optional `withNoIncrementalHydration()` may be added to `provideClientHydration` → **added, pre-v22 behavior preserved**
+  - `$safeNavigationMigration()` wrappers only if templates rely on pre-v22 `?.` semantics → **none; migration made no changes**
+  - New compiler migration list also included: BootstrapContext/withXhr (no-op), duplicate outputs (no-op), istanbul-lib-instrument added while on Karma (via CLI migration)
+  - Extended diagnostics `nullishCoalescingNotNullable` and `optionalChainNotNullable` suppressed in `tsconfig.app.json`/`tsconfig.spec.json` — re-enable and clean up in Phase 5
+- [x] Confirm TypeScript landed on 6.x: `npx tsc --version` → **6.0.3 (bumped back up now that `@angular/build` 22.2 accepts it)**
+- [x] `ng build` — fix compile errors (initial 364.98 kB raw / 97.18 kB transfer; tests 2/2 green on Karma)
 
 ## Phase 4 — Karma → Vitest
 

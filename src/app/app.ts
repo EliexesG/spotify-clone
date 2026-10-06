@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Scaffold } from './screens/scaffold/scaffold';
 import { Title } from '@angular/platform-browser';
 
@@ -6,6 +6,7 @@ import { Title } from '@angular/platform-browser';
   selector: 'app-root',
   imports: [Scaffold],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss',
 })
 export class App {

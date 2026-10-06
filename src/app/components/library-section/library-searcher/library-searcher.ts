@@ -8,6 +8,7 @@ import {
   model,
   output,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -15,6 +16,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-library-searcher',
   imports: [CommonModule, FormsModule],
   templateUrl: './library-searcher.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './library-searcher.scss',
 })
 export class LibrarySearcher {

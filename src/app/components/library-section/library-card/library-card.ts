@@ -7,6 +7,7 @@ import {
   input,
   signal,
   viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { LibraryCardVariant } from './library-card.model';
 import { MusicSource } from '../../../interfaces/music-source';
@@ -19,6 +20,7 @@ import { MusicPlayer } from '../../../services/music-player';
   selector: 'app-library-card',
   imports: [CommonModule],
   templateUrl: './library-card.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './library-card.scss',
 })
 export class LibraryCard {
