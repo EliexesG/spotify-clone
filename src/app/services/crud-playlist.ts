@@ -18,7 +18,11 @@ export class CrudPlaylist {
 
   /**
    * Resolves the track ids of a raw playlist entry into MusicSource objects.
-   * Reports (instead of silently dropping) ids that do not resolve.
+   *
+   * @param musicIds - Raw track ids from `playlist.json`
+   * @param playlistId - Owner playlist id, for warning context only
+   * @returns The resolved tracks in order; dangling ids are reported via
+   *          `console.warn` and skipped (never silently dropped)
    */
   private resolveMusic(musicIds: string[], playlistId: string): MusicSource[] {
     const resolved: MusicSource[] = [];
@@ -39,6 +43,13 @@ export class CrudPlaylist {
     return resolved;
   }
 
+  /**
+   * Looks up a playlist by id and resolves its track id list into full
+   * MusicSource objects.
+   *
+   * @param id - Playlist id from `playlist.json`
+   * @returns The resolved PlaylistSource, or undefined when the id does not exist
+   */
   getPlaylistById(id: string): PlaylistSource | undefined {
     const playlist = playlists.find((playlist) => playlist.id === id);
 
@@ -50,6 +61,11 @@ export class CrudPlaylist {
     };
   }
 
+  /**
+   * Every playlist with its track list fully resolved.
+   *
+   * @returns All PlaylistSources (empty array when the database is empty)
+   */
   getAllPlaylists(): PlaylistSource[] {
     return playlists.map((playlist) => ({
       ...playlist,
@@ -59,6 +75,9 @@ export class CrudPlaylist {
 
   /**
    * The default playlist loaded at bootstrap.
+   *
+   * @returns The `DEFAULT_PLAYLIST_ID` entry, falling back to the first
+   *          playlist in the database, or null when the database is empty.
    */
   getDefaultPlaylist(): PlaylistSource | null {
     return (

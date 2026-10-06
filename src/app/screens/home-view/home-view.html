@@ -1,9 +1,12 @@
+<!-- * Home grid: every playlist as a big card -->
 <section class="p-6">
   <h2 class="text-2xl font-bold mb-6">Your library</h2>
 
+  <!-- * Empty state (no playlists in the database) -->
   @if (playlists.length === 0) {
     <p class="text-(--muted)">No playlists yet.</p>
   } @else {
+    <!-- * Cards grid (auto-fill responsive, one big card per playlist) -->
     <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
       @for (playlist of playlists; track playlist.id) {
         <app-source-card [source]="playlist" variant="big" />

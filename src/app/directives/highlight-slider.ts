@@ -8,16 +8,25 @@ import {
   signal,
 } from '@angular/core';
 
+/**
+ * Paints the Spotify-style progress gradient on a host range input:
+ * filled portion to the left of the thumb, track color to the right,
+ * colors flip while hovered. Reacts to both bound [value] updates and
+ * user input/mouse events — no polling.
+ */
 @Directive({
   selector: '[appHighlightSlider]',
 })
 export class HighlightSlider implements OnInit {
+  /** Progress-fill color (left of the thumb) */
   colorLeft = input<string>('var(--primary)', {
     alias: 'appHighlightSliderColorLeft',
   });
+  /** Track color (right of the thumb) */
   colorRight = input<string>('var(--track)', {
     alias: 'appHighlightSliderColorRight',
   });
+  /** Mouse-over state (transparent thumb fill while not hovering) */
   hovering = signal<boolean>(false);
 
   /**
@@ -37,6 +46,7 @@ export class HighlightSlider implements OnInit {
     });
   }
 
+  // * DOM wiring: user input + hover drive the gradient repaint
   ngOnInit(): void {
     const slider = this.el.nativeElement;
 
@@ -70,9 +80,12 @@ export class HighlightSlider implements OnInit {
 
     if (!slider) return;
 
+    // * Progress percentage within [min, max]
     const value =
       ((+slider.value - +slider.min) / (+slider.max - +slider.min)) * 100;
 
+    // * Filled = hover color left of the thumb; white fill otherwise,
+    // * track color right of the thumb
     slider.style.background = `linear-gradient(to right, ${this.hovering() ? this.colorLeft() : 'white'} ${value}%, ${this.colorRight()} ${value}%)`;
   }
 }

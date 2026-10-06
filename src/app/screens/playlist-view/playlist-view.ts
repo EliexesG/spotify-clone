@@ -28,6 +28,7 @@ export class PlaylistView {
 
   id = input<string>();
 
+  /** Unknown id handling: CrudPlaylist lookup result (null → not-found view) */
   playlist = computed(() =>
     this._crudPlaylist.getPlaylistById(this.id() || ''),
   );
@@ -37,6 +38,7 @@ export class PlaylistView {
   /** Owner-requested: the action-row search filters the track table */
   trackFilter = signal('');
 
+  /** Tracks matching the current search filter (action-row SearchButton) */
   filteredSongs = computed(() => {
     const text = this.trackFilter().trim().toLowerCase();
 
@@ -55,6 +57,7 @@ export class PlaylistView {
     this.songs().reduce((acc, track) => acc + (track.durationSeconds ?? 0), 0),
   );
 
+  /** Row is the track currently playing (drives the green title/index) */
   isCurrentTrack(track: MusicSource) {
     return this.currentTrack()?.id === track.id;
   }
@@ -65,7 +68,10 @@ export class PlaylistView {
     return playingPlaylist === this.id() && this._musicPlayer.isMusicPlaying();
   });
 
-  /** Total queue length as "1hr 34 min" style text (visual header). */
+  /** Total queue length as "1hr 34 min" style text for the header line.
+   *
+   * @returns E.g. "1hr 34 min"/"3 min"; empty string when no durations exist
+   */
   durationLabel = computed(() => {
     const seconds = this.totalDuration();
 
@@ -77,6 +83,11 @@ export class PlaylistView {
     return hours > 0 ? `${hours}hr ${minutes} min` : `${minutes} min`;
   });
 
+  /** mm:ss label for a track duration; '—' when the field is missing.
+   *
+   * @param seconds - Track duration in seconds (undefined when absent)
+   * @returns Formatted duration string
+   */
   formatTrackDuration(seconds: number | undefined) {
     if (seconds === undefined) return '—';
 
@@ -86,7 +97,11 @@ export class PlaylistView {
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   }
 
-  /** Plays this playlist starting at the clicked track (official behavior). */
+  /**
+   * Plays this playlist starting at the clicked track (official behavior).
+   *
+   * @param track - The clicked row's track
+   */
   playTrack(track: MusicSource) {
     const playlist = this.playlist();
 

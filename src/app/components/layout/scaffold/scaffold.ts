@@ -7,6 +7,11 @@ import { LibrarySection } from '../library-section/library-section';
 import { NowPlayingSection } from '../now-playing-section/now-playing-section';
 import { TopBar } from '../top-bar/top-bar';
 
+/**
+ * Application shell: composes the non-routed panels (top bar, library
+ * sidebar, now-playing section, transport bar) and hosts the routed center
+ * view via the router outlet. Preloads the default playlist at bootstrap.
+ */
 @Component({
   selector: 'app-scaffold',
   imports: [

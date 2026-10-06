@@ -18,6 +18,12 @@ import { CommonModule } from '@angular/common';
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { MusicPlayer } from '../../../services/music-player';
 
+/**
+ * Music/playlist-agnostic source card used in the sidebar rows and the
+ * home grid. Renders metadata (title/subtitle/cover with image-fallback),
+ * tracks hover state, and wires playback (cover) + navigation (row body)
+ * through MusicPlayer/PlaylistPlayer/Router.
+ */
 @Component({
   selector: 'app-source-card',
   imports: [CommonModule],
@@ -31,12 +37,16 @@ export class SourceCard {
   private readonly _router = inject(Router);
 
   // * Inputs
+  /** Card visual variant (collapsed row / description row / big grid card) */
   variant = input<SourceCardVariant>('with-description');
+  /** The media source displayed (playlist or music) */
   source = input<PlaylistSource | MusicSource>();
 
   // * Computed
+  /** Card title (falls back to a placeholder) */
   title = computed(() => this.source()?.title || 'Title');
 
+  /** "Music • artist" / "Playlist • owner" line (kind via type guard) */
   subtitle = computed(() => {
     const source = this.source();
 
@@ -46,8 +56,10 @@ export class SourceCard {
     return 'Subtitle';
   });
 
+  /** Cover URL (optional in data) */
   img = computed(() => this.source()?.img);
 
+  /** True when THIS source is the one currently playing */
   isPlaying = computed(() => {
     const source = this.source();
     const isPlaying = this._musicPlayer.isMusicPlaying();
@@ -68,8 +80,11 @@ export class SourceCard {
   });
 
   // * State
+  /** Mouse-over state (drives the floating play button + highlights) */
   hover = signal(false);
+  /** Cover-image load failure (swaps to the music-note placeholder) */
   imgError = signal(false);
+  /** Outer card element (hover wiring) */
   card = viewChild<ElementRef<HTMLDivElement>>('card');
 
   constructor() {
@@ -83,6 +98,7 @@ export class SourceCard {
 
       if (!card) return;
 
+      // * Prop-driven hover wiring keeps the mouse state in Angular signals
       card.onmouseleave = () => {
         this.hover.set(false);
       };

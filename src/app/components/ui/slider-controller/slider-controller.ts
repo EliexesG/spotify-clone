@@ -6,6 +6,11 @@ import {
 } from '@angular/core';
 import { HighlightSlider } from '../../../directives/highlight-slider';
 
+/**
+ * Generic Spotify-style range slider (used for seek and volume). Wraps a
+ * native input[type=range] styled via HighlightSlider, and emits distinct
+ * events for live value changes and value commits (scrub lifecycle).
+ */
 @Component({
   selector: 'app-slider-controller',
   imports: [HighlightSlider],
@@ -16,6 +21,7 @@ import { HighlightSlider } from '../../../directives/highlight-slider';
 })
 export class SliderController {
   // * Outputs
+  /** Live value while the user drags (native `input` event) */
   valueChanged = output<number>();
 
   /**
@@ -32,12 +38,19 @@ export class SliderController {
   dragEnded = output<number>();
 
   // * Inputs
+  /** Current value (bound back from the host for programmatic updates) */
   value = input(0);
+  /** Value granularity */
   step = input(1);
+  /** Minimum allowed value */
   min = input(0);
+  /** Maximum allowed value */
   max = input(0);
+  /** Disables interaction */
   disabled = input(false);
+  /** Progress-fill color (left of the thumb) */
   colorLeft = input<string>('var(--primary)');
+  /** Track color (right of the thumb) */
   colorRight = input<string>('var(--track)');
 
   /**

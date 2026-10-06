@@ -15,6 +15,11 @@ import { AudioResolver } from './audio-resolver';
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * Queue manager: holds the loaded playlist, tracks played/unplayed indexes
+ * for shuffle, and advances through the queue (next/previous, shuffle-aware,
+ * auto-advance on track end via the AudioResolver's `audioEnded` stream).
+ */
 export class PlaylistPlayer {
   private destroy$ = inject(DestroyRef);
 
@@ -23,11 +28,15 @@ export class PlaylistPlayer {
   private readonly _audioResolver = inject(AudioResolver);
 
   // * Signals
+  /** The loaded playlist (null when cleared/never set) */
   private readonly _playlistSource = signal<PlaylistSource | null>(null);
+  /** Indexes played in the current shuffle round */
   private readonly _alreadyPlayedMusicIndexes = signal<number[]>([]);
+  /** Shuffle toggle */
   private readonly _isShuffle = signal(false);
 
   //#region Computed
+  /** Index of the current track within the loaded playlist (0 when unknown) */
   currentMusicIndex = computed(() => {
     const playlist = this._playlistSource();
     const currentMusic = this._musicPlayer.musicSource();
@@ -47,14 +56,17 @@ export class PlaylistPlayer {
   //#endregion
 
   //#region Getters
+  /** Readonly signal of the loaded playlist */
   get playlistSource(): Signal<PlaylistSource | null> {
     return this._playlistSource.asReadonly();
   }
 
+  /** Readonly signal of the played indexes of this shuffle round */
   get alreadyPlayedMusicIndexes(): Signal<number[]> {
     return this._alreadyPlayedMusicIndexes.asReadonly();
   }
 
+  /** Readonly shuffle toggle */
   get isShuffle(): Signal<boolean> {
     return this._isShuffle.asReadonly();
   }

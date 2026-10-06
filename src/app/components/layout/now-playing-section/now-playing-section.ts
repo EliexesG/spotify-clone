@@ -10,6 +10,12 @@ import {
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { MusicPlayer } from '../../../services/music-player';
 
+/**
+ * Right shell panel: mirrors the loaded playlist and current track —
+ * playlist name as panel header, large current-track cover with
+ * image-fallback, plus title/artist; empty state when nothing loads.
+ * Composed by the Scaffold.
+ */
 @Component({
   selector: 'app-now-playing-section',
   imports: [],
@@ -26,14 +32,18 @@ export class NowPlayingSection {
     () => this._playlistPlayer.playlistSource()?.title || 'Your Queue',
   );
 
+  /** Current track (null → empty state) */
   track = computed(() => this._musicPlayer.musicSource());
+  /** Current track cover URL */
   img = computed(() => this.track()?.img);
 
   // * State
+  /** Cover-image load failure (swaps to the music-note placeholder) */
   imgError = signal(false);
 
   constructor() {
     effect(() => {
+      // * Any track change resets the cover fallback
       this.track();
 
       // * Reset the fallback state on track change without depending on

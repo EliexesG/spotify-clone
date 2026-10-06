@@ -7,6 +7,12 @@
 - `npx ng test --watch=false` — Vitest via the `@angular/build:unit-test` builder (jsdom environment). No Chrome needed. Specs: `src/app/app.spec.ts`, `src/app/services/playlist-player.spec.ts`, `src/app/services/audio-resolver.spec.ts`; schematics are configured with `skipTests: true` so generated components/directives/pipes/services produce no spec files.
 - No lint config or script. Prettier is configured in `package.json` (HTML files use the `angular` parser).
 
+## Documentation (owner preference — mandatory style)
+
+- **JSDoc every class and function**: purpose, `@param` for every parameter, `@returns`, and `@throws` when a method can error. Components/services get a class-level doc; public methods/computeds/fields get per-member docs.
+- Complex function bodies get `// *` comments explaining each step (matches the existing `// * Services`, `// * Computed` region style).
+- Every HTML template documents its structure with `<!-- * Section name (purpose) -->` markers at each UI part.
+
 ## Scope (owner decision — read before adding UI)
 
 - The only core real functionality is **playback** (play/pause/seek/volume/queue/shuffle). Everything else is *merely visual*: chrome like Premium/Support/Sign up, create-playlist "+", filter chips, legal links is replicated to look like Spotify and stays non-functional. Song lists/queue are clickable because they feed playback. **Owner-approved exception:** the top-bar navigation cluster is functional (home `button` → `/`, back/forward arrows → `Location` history); all other top-bar chrome stays decorative.

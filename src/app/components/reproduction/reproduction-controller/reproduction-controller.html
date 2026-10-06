@@ -1,3 +1,4 @@
+<!-- * Transport bar (cards/details, playback controls, utilities) -->
 @let mainButtonClass = "scale-200! hover:scale-[210%]! disabled:scale-200!";
 @let buttonClass =
   "text-white disabled:text-gray-500 transition-all cursor-pointer hover:scale-110 " +
@@ -5,7 +6,7 @@
 @let activeButtonClass =
   "bg-(--primary) w-[5px] h-[5px] rounded-full absolute bottom-[-5px] right-[50%] translate-[50%]";
 
-<!-- * Music Displayer -->
+<!-- * Current track (cover w/ fallback + +/- actions, visual only) -->
 <section class="flex items-center gap-3 justify-start w-80">
   <!-- * Music Displayer -->
   @let musicSource = this.musicSource();

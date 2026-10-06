@@ -3,6 +3,7 @@
 @let playButtonClass =
   "pi absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2";
 
+<!-- * Shared cover (image w/ fallback + hover play/pause button) -->
 <ng-template #imgTemplate>
   <div
     class="w-14 h-14 relative"
@@ -32,6 +33,7 @@
   </div>
 </ng-template>
 
+<!-- * Collapsed row (cover only) -->
 @if (variant() === "only-img") {
   <div
     #card
@@ -42,6 +44,7 @@
     <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
   </div>
 } @else if (variant() === "with-description") {
+  <!-- * Sidebar row (cover + title + subtitle) -->
   <div
     #card
     [class]="cardClass + ' justify-start w-full'"
@@ -60,11 +63,13 @@
     </div>
   </div>
 } @else {
+  <!-- * Home-grid card (large cover + floating play button) -->
   <div
     #card
     class="relative flex flex-col p-2.5 rounded-md bg-(--elevated) hover:bg-(--hover-elevated) transition-colors cursor-pointer"
     (click)="open()"
   >
+    <!-- * Big cover (fallback placeholder) + floating play/pause -->
     <div class="relative mb-2">
       @if (imgError()) {
         <div
