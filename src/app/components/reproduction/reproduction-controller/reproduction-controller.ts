@@ -1,15 +1,14 @@
 import {
   Component,
   computed,
-  effect,
   inject,
-  signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { MusicPlayer } from '../../../services/music-player';
 import { CommonModule } from '@angular/common';
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { SliderController } from '../../ui/slider-controller/slider-controller';
+import { ImageFallback } from '../../ui/image-fallback/image-fallback';
 
 /**
  * Bottom transport bar: play/pause, next/previous, shuffle, restart, seek
@@ -18,7 +17,7 @@ import { SliderController } from '../../ui/slider-controller/slider-controller';
  */
 @Component({
   selector: 'app-reproduction-controller',
-  imports: [CommonModule, SliderController],
+  imports: [CommonModule, SliderController, ImageFallback],
   host: { class: 'flex items-center h-full w-full p-4' },
   templateUrl: './reproduction-controller.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -48,17 +47,6 @@ export class ReproductionController {
   isShuffle = this.playlistPlayer.isShuffle;
   //#endregion
 
-  //#region State
-  /** Bar artwork load failure (swaps to the music-note placeholder) */
-  imgError = signal(false);
-
-  constructor() {
-    // * Reset the cover-fallback state every time the music changes
-    effect(() => {
-      this.musicSource();
-      this.imgError.set(false);
-    });
-  }
   //#endregion
 
   //#region Computed

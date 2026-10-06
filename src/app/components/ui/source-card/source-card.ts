@@ -6,7 +6,6 @@ import {
   inject,
   input,
   signal,
-  untracked,
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -17,6 +16,7 @@ import { PlaylistSource } from '../../../interfaces/playlist-source';
 import { CommonModule } from '@angular/common';
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { MusicPlayer } from '../../../services/music-player';
+import { ImageFallback } from '../image-fallback/image-fallback';
 
 /**
  * Music/playlist-agnostic source card used in the sidebar rows and the
@@ -26,7 +26,7 @@ import { MusicPlayer } from '../../../services/music-player';
  */
 @Component({
   selector: 'app-source-card',
-  imports: [CommonModule],
+  imports: [CommonModule, ImageFallback],
   templateUrl: './source-card.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './source-card.scss',
@@ -82,8 +82,6 @@ export class SourceCard {
   // * State
   /** Mouse-over state (drives the floating play button + highlights) */
   hover = signal(false);
-  /** Cover-image load failure (swaps to the music-note placeholder) */
-  imgError = signal(false);
   /** Outer card element (hover wiring) */
   card = viewChild<ElementRef<HTMLDivElement>>('card');
 
@@ -91,20 +89,15 @@ export class SourceCard {
     effect(() => {
       const card = this.card()?.nativeElement;
 
-      // * Track source changes only; the imgError write must NOT depend on
-      // * imgError itself or the reset would clear the just-raised error
-      this.source();
-      untracked(() => this.imgError.set(false));
-
       if (!card) return;
 
       // * Prop-driven hover wiring keeps the mouse state in Angular signals
-      card.onmouseleave = () => {
-        this.hover.set(false);
-      };
-
       card.onmouseenter = () => {
         this.hover.set(true);
+      };
+
+      card.onmouseleave = () => {
+        this.hover.set(false);
       };
     });
   }

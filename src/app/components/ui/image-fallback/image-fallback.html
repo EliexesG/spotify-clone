@@ -1,0 +1,16 @@
+<!-- * Cover image w/ automatic error fallback (shared by all panel surfaces) -->
+@if (showFallback()) {
+  <div class="w-full h-full flex items-center justify-center bg-(--highlight)">
+    <ng-content>
+      <i class="pi pi-music-note text-(--muted)"></i>
+    </ng-content>
+  </div>
+} @else {
+  <img
+    [src]="src()"
+    [alt]="alt()"
+    [class]="imgClass()"
+    class="w-full h-full object-cover"
+    (error)="imgError.set(true)"
+  />
+}

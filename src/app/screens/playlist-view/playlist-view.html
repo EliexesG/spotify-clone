@@ -16,11 +16,10 @@
       ></div>
 
       @if (pl.img) {
-        <img
+        <app-image-fallback
           [src]="pl.img"
           alt="Playlist cover"
           class="relative w-52 h-52 rounded shadow-[0_4px_60px_rgba(0,0,0,.5)]"
-          (error)="$event.target.hidden = true"
         />
       }
 
@@ -106,11 +105,10 @@
             {{ $index + 1 }}
           </span>
           <span class="flex items-center gap-3 min-w-0">
-            <img
+            <app-image-fallback
               [src]="track.img"
               alt="Track cover"
-              class="w-10 h-10 rounded"
-              (error)="$event.target.hidden = true"
+              class="w-10 h-10 rounded shrink-0"
             />
             <span
               class="truncate font-medium"

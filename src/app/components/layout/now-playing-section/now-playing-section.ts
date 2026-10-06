@@ -1,14 +1,12 @@
 import {
   Component,
   computed,
-  effect,
   inject,
-  signal,
-  untracked,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { PlaylistPlayer } from '../../../services/playlist-player';
 import { MusicPlayer } from '../../../services/music-player';
+import { ImageFallback } from '../../ui/image-fallback/image-fallback';
 
 /**
  * Right shell panel: mirrors the loaded playlist and current track —
@@ -18,7 +16,7 @@ import { MusicPlayer } from '../../../services/music-player';
  */
 @Component({
   selector: 'app-now-playing-section',
-  imports: [],
+  imports: [ImageFallback],
   templateUrl: './now-playing-section.html',
   styleUrl: './now-playing-section.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -36,19 +34,4 @@ export class NowPlayingSection {
   track = computed(() => this._musicPlayer.musicSource());
   /** Current track cover URL */
   img = computed(() => this.track()?.img);
-
-  // * State
-  /** Cover-image load failure (swaps to the music-note placeholder) */
-  imgError = signal(false);
-
-  constructor() {
-    effect(() => {
-      // * Any track change resets the cover fallback
-      this.track();
-
-      // * Reset the fallback state on track change without depending on
-      // * imgError itself (same pattern as SourceCard)
-      untracked(() => this.imgError.set(false));
-    });
-  }
 }

@@ -12,11 +12,12 @@ import { CrudPlaylist } from '../../services/crud-playlist';
 import { PlaylistPlayer } from '../../services/playlist-player';
 import { MusicPlayer } from '../../services/music-player';
 import { SearchButton } from '../../components/ui/search-button/search-button';
+import { ImageFallback } from '../../components/ui/image-fallback/image-fallback';
 import { MusicSource } from '../../interfaces/music-source';
 
 @Component({
   selector: 'app-playlist-view',
-  imports: [CommonModule, DatePipe, RouterLink, SearchButton],
+  imports: [CommonModule, DatePipe, RouterLink, SearchButton, ImageFallback],
   templateUrl: './playlist-view.html',
   styleUrl: './playlist-view.scss',
   changeDetection: ChangeDetectionStrategy.Eager,

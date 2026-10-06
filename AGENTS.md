@@ -20,10 +20,11 @@
 
 ## Architecture
 
-- Layers under `src/app/`: `screens/` (**routed pages only**, via `app.routes.ts`: `home-view`, `playlist-view`), `components/layout/` (shell panels composed by `scaffold`, not routed: `scaffold`, `top-bar`, `library-section`, `now-playing-section`), `components/reproduction/` (`reproduction-controller`), `components/ui/` (generic reusable, playlist+music agnostic: `source-card` + `source-card.model.ts`, `slider-controller`, `search-button`), `services/`, `interfaces/`, `directives/`.
+- Layers under `src/app/`: `screens/` (**routed pages only**, via `app.routes.ts`: `home-view`, `playlist-view`), `components/layout/` (shell panels composed by `scaffold`, not routed: `scaffold`, `top-bar`, `library-section`, `now-playing-section`), `components/reproduction/` (`reproduction-controller`), `components/ui/` (generic reusable, playlist+music agnostic: `source-card` + `source-card.model.ts`, `slider-controller`, `search-button`, `image-fallback`), `services/`, `interfaces/`, `directives/`.
 - Root `App` renders `Scaffold` (from `components/layout/`); routing drives the center `router-outlet` (`''` → home grid, `playlist/:id` → detail).
 - Zoneless since the v22 upgrade: no zone.js anywhere. All template state must be signals (`signal`/`computed`/`effect`, `takeUntilDestroyed`), not stores; every component explicitly pins `ChangeDetectionStrategy.Eager` (deliberate — keep it when adding components unless consciously migrating to OnPush).
 - Audio playback: `AudioResolver` wraps `HTMLAudioElement`s behind signals/BehaviorSubject (playing/volume/duration/error/buffering) and exposes an `audioEnded` stream — it's the only place `new Audio(...)` lives, and media handlers must use `addEventListener` (never overwrite `onended` etc.). `MusicPlayer` and `PlaylistPlayer` are facades over it.
+- Cover images: always use `app-image-fallback` (`components/ui/image-fallback`) — it owns the load-error state, resets on `src` change, and swaps to the music-note placeholder. Never hand-roll `(error)` handlers or hide-img fallbacks.
 
 ## Theming (colors)
 

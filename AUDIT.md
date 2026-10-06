@@ -34,6 +34,7 @@
 - **Auto-advance on song end** (`playlist-player.ts:63-71`)
 - **Initial preload** of the default playlist's first song (`scaffold.ts:20-22`, `CrudPlaylist.getDefaultPlaylist()`)
 - **Signal-based audio plumbing** — single `new Audio(...)` site; `addEventListener` only; error/buffering signals + `audioEnded` stream (`audio-resolver.ts`)
+- **Shared cover component (`ImageFallback`)** — single error-fallback owner for all covers (sidebar rows, grid, transport bar, now-playing panel, playlist header + table rows); consumers only size it (`image-fallback.*`)
 - **Build/test infra** — Angular 22.2 zoneless, TypeScript 6, Vitest unit tests (**17 specs / 3 files**), budgets enforced
 
 ## B. Half-done / incomplete ◐
@@ -150,6 +151,7 @@
 - **Restructure/taxonomy** — `screens/` routed-only; `layout/` shell group (scaffold, library-section, now-playing-section, top-bar); `ui/` generic widgets (SourceCard, slider-controller, search-button); `components/library/` removed as hollow.
 - **Searcher generalization** — `search-button` shared by sidebar + playlist action-row; playlist play button stateful.
 - **Docs round** — JSDoc/template-marker sweep applied codebase-wide; `HomeView` deferred-import dangling bug caught + fixed.
+- **Image-fallback round (owner request)** — the 4 hand-rolled error patterns (SourceCard ×3, ReproductionController, NowPlayingSection, playlist-view crude `hidden`) consolidated into `components/ui/image-fallback/`; consumers drop their own signals/effects; verified: 6 covers normal + all placeholders on blocked CDN + no stale fallback on src change; AGENTS gained the "never hand-roll (error)" rule.
 
 ## Suggested build order (needs owner prioritization)
 

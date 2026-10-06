@@ -8,22 +8,9 @@
   </header>
 
   @if (track(); as t) {
-    <!-- * Current track: big cover + title + artist -->
-    <div
-      class="relative w-full aspect-square rounded-md overflow-hidden bg-(--highlight) mt-2"
-    >
-      @if (imgError()) {
-        <div class="w-full h-full flex items-center justify-center">
-          <i class="pi pi-music-note text-(--muted)"></i>
-        </div>
-      } @else {
-        <img
-          [src]="img()"
-          alt="Current track cover"
-          class="w-full h-full object-cover"
-          (error)="imgError.set(true)"
-        />
-      }
+    <!-- * Current track: big cover (shared component) + title + artist -->
+    <div class="relative w-full aspect-square rounded-md overflow-hidden mt-2">
+      <app-image-fallback [src]="img()" alt="Current track cover" />
     </div>
     <p class="font-bold mt-4 mb-1 wrap-break-word">{{ t.title }}</p>
     <p class="text-(--muted) m-0">{{ t.artist }}</p>

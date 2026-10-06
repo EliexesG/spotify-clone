@@ -9,22 +9,11 @@
     class="w-14 h-14 relative"
     (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
   >
-    @if (imgError()) {
-      <div
-        class="w-full h-full flex items-center justify-center bg-(--highlight)"
-        [ngClass]="{ 'opacity-[0.5]': hover() }"
-      >
-        <i class="pi pi-music-note text-gray-400"></i>
-      </div>
-    } @else {
-      <img
-        [src]="img()"
-        alt="Music Cover"
-        class="w-full h-full object-cover"
-        [ngClass]="{ 'opacity-[0.5]': hover() }"
-        (error)="imgError.set(true)"
-      />
-    }
+    <app-image-fallback
+      [src]="img()"
+      alt="Music Cover"
+      class="absolute inset-0"
+    />
     <i
       [hidden]="!hover()"
       [class]="playButtonClass"
@@ -69,22 +58,13 @@
     class="relative flex flex-col p-2.5 rounded-md bg-(--elevated) hover:bg-(--hover-elevated) transition-colors cursor-pointer"
     (click)="open()"
   >
-    <!-- * Big cover (fallback placeholder) + floating play/pause -->
+    <!-- * Big cover (shared fallback component) + floating play/pause -->
     <div class="relative mb-2">
-      @if (imgError()) {
-        <div
-          class="aspect-square w-full rounded-sm bg-(--highlight) flex items-center justify-center"
-        >
-          <i class="pi pi-music-note text-(--muted)"></i>
-        </div>
-      } @else {
-        <img
-          [src]="img()"
-          alt="Playlist cover"
-          class="aspect-square w-full rounded-sm object-cover"
-          (error)="imgError.set(true)"
-        />
-      }
+      <app-image-fallback
+        [src]="img()"
+        alt="Playlist cover"
+        class="aspect-square w-full rounded-sm overflow-hidden"
+      />
       <button
         [hidden]="!hover()"
         class="absolute bottom-2 right-2 w-12 h-12 rounded-full bg-(--primary) text-black flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
