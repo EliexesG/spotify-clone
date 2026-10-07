@@ -1,7 +1,6 @@
 <div class="w-full h-screen flex flex-col">
   <!-- * Top Bar (visual-only chrome) -->
   <app-top-bar></app-top-bar>
-
   <main class="w-full! grow flex flex-col p-2 gap-2 overflow-hidden min-h-0">
     <div class="w-full! grow flex gap-2 overflow-hidden min-h-0">
       <!-- * Library Section -->
@@ -25,4 +24,10 @@
       <app-reproduction-controller></app-reproduction-controller>
     </section>
   </main>
+
+  <!-- * Playback feedback toasts (error/buffering) -->
+  <app-playback-feedback></app-playback-feedback>
+
+  <!-- * Keyboard shortcuts overlay (? / Esc) -->
+  <app-shortcuts-overlay></app-shortcuts-overlay>
 </div>

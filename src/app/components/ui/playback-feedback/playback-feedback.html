@@ -1,0 +1,22 @@
+<!-- * Playback feedback (error persistent pill / buffering spinner pill) -->
+@if (error(); as message) {
+  <!-- * Load/playback failure: fixed toast above the transport bar -->
+  <div
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-(--highlight) text-white text-sm px-4 py-2 shadow-lg"
+  >
+    <i class="pi pi-exclamation-triangle text-(--primary)"></i>
+    <p class="m-0 truncate max-w-100!">{{ message }}</p>
+  </div>
+} @else if (showBuffering()) {
+  <!-- * Stalled load: transient spinner pill -->
+  <div
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-(--highlight) text-(--muted) text-sm px-4 py-2 shadow-lg"
+  >
+    <i class="pi pi-spin pi-spinner"></i>
+    <p class="m-0">Buffering…</p>
+  </div>
+}

@@ -10,10 +10,10 @@
 | Category | Count | Headline |
 |---|---|---|
 | Dead code / unused | 0 — ✅ **cleaned (D)** | verified deletions; two entries became obsolete via G (routing, `big`) |
-| Finished | 15 | Playback stack (transport/shuffle/auto-advance/silent scrub), library sidebar + search, routing + home grid + playlist song-list view, now-playing panel, top bar w/ live nav cluster |
+| Finished | 19 | Playback stack (transport/shuffle/repeat/auto-advance/silent scrub/mute), library sidebar + search + empty-states, routing + home grid + playlist song-list view, now-playing panel + next-in-queue, top bar w/ live nav cluster + shortcuts trigger, keyboard shortcuts, Media Session, error/buffering toast, shortcuts overlay |
 | Half-done / incomplete | 0 open (13 of 13 resolved) | all §B items resolved |
 | Excluded by owner scope | — | **no CRUD/API/persistence/likes/queue-reorder** — visual clone with minimal real playback only (see ⚠) |
-| Remaining open (non-scope) | 6 | shortcuts, media-session, a11y pass, error/buffering UI, responsive pass, autoplay policy |
+| Remaining open (non-scope) | 3 | a11y pass, responsive pass, autoplay policy ADR |
 | Risks / bugs | 17 (14 + 3 scrub round) | all ✅ fixed + verified |
 
 ## A. Finished ✔
@@ -34,8 +34,15 @@
 - **Auto-advance on song end** (`playlist-player.ts:63-71`)
 - **Initial preload** of the default playlist's first song (`scaffold.ts:20-22`, `CrudPlaylist.getDefaultPlaylist()`)
 - **Signal-based audio plumbing** — single `new Audio(...)` site; `addEventListener` only; error/buffering signals + `audioEnded` stream (`audio-resolver.ts`)
+- **Repeat modes** — off/all/one cycling (`PlaylistPlayer.toggleRepeat`), auto-advance honors the policy (`one` → restart, `off` + queue end → stop, `all`/manual → wrap); transport repeat button w/ official active styling (green dot / "1" dot) (`playlist-player.ts`, `reproduction-controller.html`)
+- **Mute** — clickable volume icon + `MusicPlayer.toggleMute()` (last-audible restore), volume slider/icon disabled with no source (`music-player.ts`, `reproduction-controller.html`)
+- **Keyboard shortcuts** — `services/keyboard-shortcuts.ts` (instantiated by `Scaffold`): Space play/pause, ←/→ seek ±5s, ↑/↓ volume ±0.1, M mute, S shuffle, R repeat, N/P next/prev; text-entry targets always yield; seek/volume clamped. 5 specs; live-verified (incl. typing-yield) (`keyboard-shortcuts.ts`)
+- **Media Session API** — `PlaylistPlayer.setupMediaSession()` (feature-gated): per-track metadata, `play/pause/previoustrack/nexttrack` registered once (no overwrite rule), `playbackState` mirrors `isMusicPlaying`; OS media keys/lock-screen art (`playlist-player.ts`)
+- **Error/buffering surface** — `components/ui/playback-feedback/` (rendered by `Scaffold`): fixed `role="status"` toast over `audioError` (persistent until next canplay/source change) + buffer-spinner pill for stalled-not-playing (`playback-feedback.*`)
+- **Shortcuts overlay** — `components/ui/shortcuts-overlay/` official-style centered modal (keycap chips, 4 groups / 12 rows, `shortcuts-overlay.model.ts` = display source of truth); opens with `?` or the top-bar "?" trigger, closes with Escape/backdrop, playback shortcuts suspended while open
+- **Search empty-states** — `@empty` "Couldn't find "X"" in library sidebar + playlist track loop (`library-section.html`, `playlist-view.html`)
 - **Shared cover component (`ImageFallback`)** — single error-fallback owner for all covers (sidebar rows, grid, transport bar, now-playing panel, playlist header + table rows); consumers only size it (`image-fallback.*`)
-- **Build/test infra** — Angular 22.2 zoneless, TypeScript 6, Vitest unit tests (**17 specs / 3 files**), budgets enforced
+- **Build/test infra** — Angular 22.2 zoneless, TypeScript 6, Vitest unit tests (**27 specs / 3 files**), budgets enforced
 
 ## B. Half-done / incomplete ◐
 
@@ -47,12 +54,9 @@
 
 **Remaining genuinely open (players/cosmetics only):**
 
-- **Keyboard shortcuts** — space/arrows play-pause; none *(inferred)*
-- **Media Session API integration** *(inferred)*
 - **Accessibility pass** — global `:focus-visible` ring landed (E13); still no aria/roles/tabindex/keyboard handlers; interactive divs unreachable by keyboard *(code-verified, grep 0 hits)*
-- **Error/buffering UI surfacing** — `audioError`/`audioBuffering` signals + recovery flow landed in AudioResolver (E8); no user-facing toast/spinner yet *(sig.-backed, UI pending — cosmetic)*
 - **Responsive pass** — playlist-view gained `md:` header breakpoints + auto-fill grids; core scaffold stays fixed-width (`w-80/w-96`, `min-w-[500px]`); no true mobile pass *(partially started)*
-- **Repeat/autoplay policy** / play-on-load options — if the owner wants repeat-as-off/all/one beyond the scope statement *(inferred)*
+- **Autoplay/repeat policy ADR** — record the coding policy as-is (load-without-play defaults, repeat `off`, shuffle `off`); §B reference implementations fully cover the behavior itself
 
 ## D. Dead code — ✅ cleaned 2026-10-06 (historical proof)
 
@@ -148,6 +152,8 @@
 - **Mute round (owner request, B5+B11)** — `MusicPlayer.toggleMute()` stores the last audible volume and restores it on un-mute; the volume icon became a real button bound to it and the volume slider gained `[disabled]="disableReproductionControls()"` (mirrors the seek bar; the bootstrap default source means it only engages after a source is cleared). Verified live: 0.5→0→0.5 with icon off/up and slider sync.
 - **Repeat round (owner request, B4)** — `PlaylistPlayer` gains `RepeatMode` (`'off' | 'all' | 'one'`) + cycling `toggleRepeat()`; the `audioEnded` auto-advance honors it (`one` → restart, `off` + queue ended → stop instead of wrap, `all`/manual → wrap as before); the transport restart button became the repeat button with Spotify's active styling (green icon + dot for `all`, green "1" dot for `one`); 5 new deterministic specs (22/22) with the UI cycle live-verified.
 - **Parity round (owner request, B10+B6+B9)** — search empty-states land in both views (`@empty` + "Couldn't find "X"", live-verified with 0 cards); the "Next in queue" compact preview lands in `NowPlayingSection` (official app parity, owner-approved): `PlaylistPlayer.nextMusic` computed exposes the sequential next under non-shuffle, the row hides under shuffle/at queue end (random can't be predicted), and it reuses the generic `SourceCard` (`open()` gained the music path — jump-and-play — its first real music consumer, so the hand-rolled duplicate row was deleted instead of grown); decorative transport icons gained honest chrome semantics (`role="img"` + `aria-label` + `title`, still no actions by scope); `alreadyPlayedMusicIndexes` public getter removed, add/remove helpers privatized (internal shuffle bookkeeping only). Live-verified all four surfaces; build green; 22/22.
+- **Shortcuts/media-session/feedback round (owner request, 3 §C items)** — `KeyboardShortcuts` service (Scaffold-instantiated; text inputs yield; clamped seek/volume), Media Session mirrored from `PlaylistPlayer` (feature-gated, handler-once rule, per-track metadata), `playback-feedback` toast rendered by `Scaffold`; 5 new specs (27/27) + the full key map live-verified, including blocked-route error pill.
+- **Shortcuts-overlay round (owner request, official parity research)** — the official desktop app exposes its binding list through a centered dark modal opened with `Ctrl/Cmd + /` (Shift+`\`/`?` variants, support-article verified); ours: `components/ui/shortcuts-overlay/` (`role="dialog"`, keycap chips styled with tokens, 4 groups / 12 rows mirroring the real map, single display source of truth in `shortcuts-overlay.model.ts`); opens with `?` or the new top-bar "?" trigger button (owner-requested discoverability hint, functional like home/nav), closes with Escape or backdrop click; playback shortcuts suspend while open. Live-verified all five paths (button, `?`, space-suspension, Esc, backdrop).
 
 ## Suggested build order (needs owner prioritization)
 

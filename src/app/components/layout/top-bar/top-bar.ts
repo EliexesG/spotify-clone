@@ -1,11 +1,13 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { KeyboardShortcuts } from '../../../services/keyboard-shortcuts';
 
 /**
  * Global top bar. Visual-only chrome per the project scope — except the
- * owner-approved navigation cluster: the home button drives the Router to
- * `/` and the chevrons walk the visit history via `Location`.
+ * owner-approved navigation cluster (home button → `/`, chevrons → visit
+ * history via `Location`) and the keyboard-shortcuts "?" trigger that
+ * opens the shortcuts overlay.
  */
 @Component({
   selector: 'app-top-bar',
@@ -20,6 +22,8 @@ export class TopBar {
   private readonly _router = inject(Router);
   /** Browser history accessor (back/forward walk) */
   private readonly _location = inject(Location);
+  /** Shortcuts overlay trigger (public open signal) */
+  protected readonly keyboardShortcuts = inject(KeyboardShortcuts);
 
   /**
    * Navigates home (official): the house button returns to the grid route.

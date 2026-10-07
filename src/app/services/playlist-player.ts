@@ -119,6 +119,51 @@ export class PlaylistPlayer {
 
       if (isPlaying) this.addMusicToAlreadyPlayed(currentIndex);
     });
+
+    this.setupMediaSession();
+  }
+
+  /**
+   * Mirrors playback into the Media Session API (OS media keys / lock
+   * screen / overlay controls) when the browser supports it.
+   *
+   * Handlers are registered exactly once (never overwrite-registered on
+   * subsequent tracks, same rule as `addEventListener` media handlers);
+   * metadata is re-published on every track change, and the playback
+   * state follows `isMusicPlaying`.
+   */
+  private setupMediaSession() {
+    // * Feature detection: unsupported browsers (jsdom) must be no-ops
+    if (!('mediaSession' in navigator)) return;
+
+    const session = navigator.mediaSession;
+
+    // * Metadata + action handlers per session (set once)
+    session.setActionHandler('play', () => this._musicPlayer.playMusic());
+    session.setActionHandler('pause', () => this._musicPlayer.pauseMusic());
+    session.setActionHandler('previoustrack', () => this.playPreviousMusic());
+    session.setActionHandler('nexttrack', () => this.playNextMusic());
+
+    // * Publish the current track (artwork/title/artist) whenever it changes
+    effect(() => {
+      const track = this._musicPlayer.musicSource();
+
+      session.metadata = track
+        ? new MediaMetadata({
+            title: track.title,
+            artist: track.artist,
+            album: track.album,
+            artwork: track.img ? [{ src: track.img }] : [],
+          })
+        : null;
+    });
+
+    // * Keep the OS-side play state in sync (controls icon + seek hint)
+    effect(() => {
+      session.playbackState = this._musicPlayer.isMusicPlaying()
+        ? 'playing'
+        : 'paused';
+    });
   }
 
   /**

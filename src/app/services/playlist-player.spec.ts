@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import { PlaylistPlayer } from './playlist-player';
 import { MusicPlayer } from './music-player';
 import { AudioResolver } from './audio-resolver';
+import { KeyboardShortcuts } from './keyboard-shortcuts';
 import { PlaylistSource } from '../interfaces/playlist-source';
 import { MusicSource } from '../interfaces/music-source';
 
@@ -180,6 +181,80 @@ describe('PlaylistPlayer', () => {
       player.playNextMusic(); // manual: no repeat policy
 
       expect(musicPlayer.musicSource()?.id).toBe('a');
+    });
+  });
+
+  describe('keyboard shortcuts', () => {
+    /** Synthetic keydown dispatched on the given target (input test bypasses shortcuts) */
+    const press = (key: string, target?: EventTarget) => {
+      const event = new KeyboardEvent('keydown', { key, bubbles: true });
+
+      (target ?? document.body).dispatchEvent(event);
+
+      return event.defaultPrevented;
+    };
+
+    beforeEach(() => {
+      TestBed.inject(KeyboardShortcuts);
+    });
+
+    it('toggles play/pause with Space', () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), true);
+      expect(musicPlayer.isMusicPlaying()).toBe(true);
+
+      press(' ');
+      expect(musicPlayer.isMusicPlaying()).toBe(false);
+
+      press(' ');
+      expect(musicPlayer.isMusicPlaying()).toBe(true);
+    });
+
+    it('seeks with arrow keys without throwing out-of-range', () => {
+      player.changePlaylistSource(fakePlaylist(['a']), false);
+      expect(() => {
+        press('ArrowRight'); // seeks +5s clamped to duration
+        press('ArrowLeft');
+      }).not.toThrow();
+    });
+
+    it('steps volume with arrow keys and never goes out of [0,1]', () => {
+      musicPlayer.changeVolume(0.5);
+
+      press('ArrowUp');
+      press('ArrowUp');
+      expect(musicPlayer.volume()).toBe(0.7);
+
+      press('ArrowDown');
+      press('ArrowDown');
+      expect(musicPlayer.volume()).toBe(0.5);
+
+      press('ArrowDown');
+      press('ArrowDown');
+      press('ArrowDown');
+      press('ArrowDown');
+      press('ArrowDown');
+      press('ArrowDown');
+      expect(musicPlayer.volume()).toBe(0);
+    });
+
+    it('cycles repeat with R and toggles shuffle with S', () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false);
+
+      press('r');
+      expect(player.repeatMode()).toBe('all');
+
+      press('s');
+      expect(player.isShuffle()).toBe(true);
+    });
+
+    it('skips everything while typing in an input', () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false);
+
+      const input = document.createElement('input');
+      document.body.appendChild(input);
+
+      expect(press('r', input)).toBe(false); // keydown not prevented
+      expect(player.repeatMode()).toBe('off');
     });
   });
 });

@@ -1,0 +1,45 @@
+@if (open()) {
+  <!-- * Backdrop (click-to-close) -->
+  <div
+    class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
+    (click)="closeOverlay()"
+    role="presentation"
+  >
+    <!-- * Modal (official centered elevated panel) -->
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Keyboard shortcuts"
+      class="relative w-130 max-w-[90vw] max-h-[70vh] overflow-y-auto rounded-lg bg-(--elevated) p-8 shadow-lg"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- * Title -->
+      <h2 class="font-bold text-xl mb-6 m-0">Keyboard shortcuts</h2>
+
+      <!-- * Groups (description left / keycaps right) -->
+      @for (group of groups; track group.heading) {
+        <section class="mb-6">
+          <h3 class="text-(--muted) font-bold text-sm uppercase tracking-wide m-0 mb-2">
+            {{ group.heading }}
+          </h3>
+          <ul class="m-0 p-0 list-none flex flex-col gap-2">
+            @for (entry of group.entries; track entry.description) {
+              <li class="flex items-center justify-between gap-4 text-sm">
+                <span class="truncate">{{ entry.description }}</span>
+                <span class="flex items-center gap-1.5 shrink-0">
+                  @for (key of entry.keys; track $index) {
+                    <kbd
+                      class="rounded bg-(--track) text-white text-xs font-medium px-2 py-1 leading-none"
+                    >
+                      {{ key }}
+                    </kbd>
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </div>
+}

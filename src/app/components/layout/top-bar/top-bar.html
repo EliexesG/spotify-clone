@@ -41,8 +41,16 @@
     </div>
   </div>
 
-  <!-- * Right cluster: notifications / social / account (visual-only) -->
+  <!-- * Right cluster: shortcuts help (functional) + notifications/social/account (visual-only) -->
   <div class="flex items-center gap-3 text-(--muted)">
+    <button
+      class="w-8 h-8 rounded-full flex items-center justify-center text-sm cursor-pointer hover:bg-(--highlight) hover:text-white"
+      (click)="keyboardShortcuts.helpOpen.set(true)"
+      aria-label="Keyboard shortcuts"
+      title="Keyboard shortcuts (?)"
+    >
+      <i class="pi pi-question"></i>
+    </button>
     <span
       class="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-(--highlight)"
       ><i class="pi pi-bell"></i
