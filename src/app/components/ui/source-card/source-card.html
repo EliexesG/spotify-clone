@@ -5,30 +5,42 @@
 
 <!-- * Shared cover (image w/ fallback + hover play/pause button) -->
 <ng-template #imgTemplate>
-  <div
-    class="w-14 h-14 relative"
+  <button
+    type="button"
+    class="w-14 h-14 relative cursor-pointer"
+    [attr.aria-label]="(isPlaying() ? 'Pause' : 'Play') + ' ' + title()"
+    title="{{ isPlaying() ? 'Pause' : 'Play' }} {{ title() }}"
     (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()"
   >
-    <app-image-fallback
-      [src]="img()"
-      alt="Music Cover"
-      class="absolute inset-0"
-    />
-    <i
-      [hidden]="!hover()"
-      [class]="playButtonClass"
-      [ngClass]="{ 'pi-play': !isPlaying(), 'pi-pause': isPlaying() }"
-    ></i>
-  </div>
+    <span class="absolute inset-0 pointer-events-none">
+      <app-image-fallback
+        [src]="img()"
+        alt="Music Cover"
+        class="absolute inset-0"
+      />
+      <i
+        [hidden]="!hover()"
+        [class]="playButtonClass"
+        [ngClass]="{ 'pi-play': !isPlaying(), 'pi-pause': isPlaying() }"
+      ></i>
+    </span>
+  </button>
 </ng-template>
 
 <!-- * Collapsed row (cover only) -->
 @if (variant() === "only-img") {
   <div
     #card
+    role="button"
+    tabindex="0"
     [class]="cardClass + ' justify-center w-fit'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
     (click)="open()"
+    (keydown.enter)="open()"
+    (keydown.space)="$event.preventDefault(); open()"
+    aria-label="Open playlist {{ title() }}"
   >
     <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
   </div>
@@ -36,9 +48,14 @@
   <!-- * Sidebar row (cover + title + subtitle) -->
   <div
     #card
+    role="button"
+    tabindex="0"
     [class]="cardClass + ' justify-start w-full'"
     [ngClass]="{ 'bg-(--highlight)': hover() }"
     (click)="open()"
+    (keydown.enter)="open()"
+    (keydown.space)="$event.preventDefault(); open()"
+    aria-label="Open playlist {{ title() }}"
   >
     <ng-container [ngTemplateOutlet]="imgTemplate"></ng-container>
     <div class="ms-3">
@@ -55,8 +72,13 @@
   <!-- * Home-grid card (large cover + floating play button) -->
   <div
     #card
+    role="button"
+    tabindex="0"
     class="relative flex flex-col p-2.5 rounded-md bg-(--elevated) hover:bg-(--hover-elevated) transition-colors cursor-pointer"
     (click)="open()"
+    (keydown.enter)="open()"
+    (keydown.space)="$event.preventDefault(); open()"
+    aria-label="Open playlist {{ title() }}"
   >
     <!-- * Big cover (shared fallback component) + floating play/pause -->
     <div class="relative mb-2">
@@ -66,9 +88,13 @@
         class="aspect-square w-full rounded-sm overflow-hidden"
       />
       <button
+        type="button"
         [hidden]="!hover()"
         class="absolute bottom-2 right-2 w-12 h-12 rounded-full bg-(--primary) text-black flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+        [attr.aria-label]="(isPlaying() ? 'Pause' : 'Play') + ' ' + title()"
         (click)="isPlaying() ? pause() : play(); $event.stopPropagation()"
+        (keydown.enter)="$event.stopPropagation()"
+        (keydown.space)="$event.stopPropagation()"
       >
         <i [ngClass]="isPlaying() ? 'pi pi-pause' : 'pi pi-play'"></i>
       </button>

@@ -2,18 +2,20 @@
   class="flex flex-col w-full h-full rounded-2xl bg-(--secondary) p-3 overflow-y-auto transition-all!"
   [ngClass]="{ 'w-80': open() }"
 >
-  <!-- * Library Header -->
-  <section
+  <!-- * Library Header (collapse/expand toggle, keyboard reachable) -->
+  <button
+    type="button"
     (click)="toggleOpen()"
-    class="flex items-center justify-start w-full h-10 shadow ps-2 cursor-pointer"
+    class="flex items-center justify-start w-full h-10 shadow ps-2 cursor-pointer border-none outline-none bg-transparent"
     [ngClass]="{ 'justify-center! ps-0!': !open() }"
+    aria-label="{{ open() ? 'Collapse' : 'Expand' }} your library"
   >
     <i class="text-white pi pi-bars"></i>
 
     @if (open()) {
       <p class="font-bold ms-2 text-white">Your library</p>
     }
-  </section>
+  </button>
 
   <!-- * Library Searcher -->
   @if (open()) {

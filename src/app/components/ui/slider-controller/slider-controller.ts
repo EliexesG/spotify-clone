@@ -48,6 +48,8 @@ export class SliderController {
   max = input(0);
   /** Disables interaction */
   disabled = input(false);
+  /** Accessible name for the native input (screen readers) */
+  label = input('');
   /** Progress-fill color (left of the thumb) */
   colorLeft = input<string>('var(--primary)');
   /** Track color (right of the thumb) */

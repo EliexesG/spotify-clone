@@ -6,6 +6,7 @@
   [step]="step()"
   [value]="value()"
   [disabled]="disabled()"
+  [attr.aria-label]="label()"
   (pointerdown)="dragStarted.emit()"
   (pointerup)="commit($event)"
   (pointercancel)="commit($event)"

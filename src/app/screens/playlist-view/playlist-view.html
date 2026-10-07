@@ -81,55 +81,94 @@
       </div>
     </div>
 
-    <!-- * Song table -->
+    <!-- * Song table (semantic table: header + rows aligned by colgroup) -->
     <div class="px-6 pb-8">
-      <div
-        class="grid grid-cols-[16px_6fr_4fr_3fr_1fr] items-center gap-4 text-(--muted) text-sm border-b border-white/10 pb-2 sticky top-0 bg-linear-to-b"
-      >
-        <span class="text-center">#</span>
-        <span>Title</span>
-        <span>Album</span>
-        <span>Date added</span>
-        <span class="text-end"><i class="pi pi-clock"></i></span>
-      </div>
+      <table class="w-full table-fixed border-collapse" aria-label="Song list">
+        <colgroup>
+          <col class="w-4" />
+          <col class="w-[56%]" />
+          <col class="w-[20%]" />
+          <col class="w-[16%]" />
+          <col class="w-[8%]" />
+        </colgroup>
 
-      @for (track of filteredSongs(); track track.id) {
-        <div
-          class="grid grid-cols-[16px_6fr_4fr_3fr_1fr] items-center gap-4 h-14 px-4 -mx-4 rounded hover:bg-(--elevated) cursor-pointer text-sm"
-          (click)="playTrack(track)"
-        >
-          <span
-            class="text-center text-(--muted)"
-            [ngClass]="{ 'text-(--primary)': isCurrentTrack(track) }"
+        <thead>
+          <tr
+            class="sticky top-0 h-9 z-10 bg-(--secondary) text-(--muted) text-sm border-b border-white/10"
           >
-            {{ $index + 1 }}
-          </span>
-          <span class="flex items-center gap-3 min-w-0">
-            <app-image-fallback
-              [src]="track.img"
-              alt="Track cover"
-              class="w-10 h-10 rounded shrink-0"
-            />
-            <span
-              class="truncate font-medium"
-              [ngClass]="{ 'text-(--primary)': isCurrentTrack(track) }"
-              >{{ track.title }}</span
+            <th class="font-normal text-center">#</th>
+            <th class="font-normal text-left">Title</th>
+            <th class="font-normal text-left">Album</th>
+            <th class="font-normal text-left">Date added</th>
+            <th class="font-normal text-right">
+              <i class="pi pi-clock"></i>
+              <span class="sr-only">Duration</span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (track of filteredSongs(); track track.id) {
+            <tr
+              class="h-14 cursor-pointer hover:bg-(--highlight) text-sm"
+              (click)="playTrack(track)"
             >
-          </span>
-          <span class="text-(--muted) truncate">{{ track.album || "—" }}</span>
-          <span class="text-(--muted)">{{
-            track.dateAdded ? (track.dateAdded | date: "mediumDate") : "—"
-          }}</span>
-          <span class="text-end text-(--muted)">{{
-            formatTrackDuration(track.durationSeconds)
-          }}</span>
-        </div>
-      } @empty {
-        <!-- * No matching tracks (search empty state) -->
-        <p class="text-(--muted) text-sm py-6 m-0">
-          Couldn't find "{{ trackFilter().trim() }}"
-        </p>
-      }
+              <td
+                class="text-center text-(--muted)"
+                [ngClass]="{ 'text-(--primary)': isCurrentTrack(track) }"
+              >
+                {{ $index + 1 }}
+              </td>
+              <td class="min-w-0">
+                <span class="flex items-center gap-3">
+                  <app-image-fallback
+                    [src]="track.img"
+                    alt="Track cover"
+                    class="w-10 h-10 rounded shrink-0"
+                  />
+                  <span class="min-w-0">
+                    <button
+                      type="button"
+                      class="block truncate font-medium w-full text-left border-none outline-none bg-transparent cursor-pointer"
+                      [ngClass]="{ 'text-(--primary)': isCurrentTrack(track) }"
+                      (click)="playTrack(track); $event.stopPropagation()"
+                      [attr.aria-label]="
+                        'Play ' +
+                        track.title +
+                        ' by ' +
+                        (track.artist || 'Unknown artist')
+                      "
+                    >
+                      {{ track.title }}
+                    </button>
+                    <span class="block truncate text-(--muted) text-xs">{{
+                      track.artist
+                    }}</span>
+                  </span>
+                </span>
+              </td>
+              <td class="text-(--muted) truncate">
+                {{ track.album || "—" }}
+              </td>
+              <td class="text-(--muted)">
+                {{
+                  track.dateAdded ? (track.dateAdded | date: "mediumDate") : "—"
+                }}
+              </td>
+              <td class="text-end text-(--muted)">
+                {{ formatTrackDuration(track.durationSeconds) }}
+              </td>
+            </tr>
+          } @empty {
+            <!-- * No matching tracks (search empty state) -->
+            <tr>
+              <td colspan="5" class="text-(--muted) text-sm py-6">
+                Couldn't find "{{ trackFilter().trim() }}"
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </section>
 } @else {

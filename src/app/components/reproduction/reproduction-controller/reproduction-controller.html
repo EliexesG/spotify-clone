@@ -20,7 +20,7 @@
       alt="Music Cover"
       class="w-16 h-16 rounded shrink-0"
     />
-    <div>
+    <div aria-live="polite">
       <p class="font-bold text-sm truncate">{{ musicSource.title }}</p>
       <p class="font-light text-(--muted) text-xs truncate">
         {{ musicSource.artist }}
@@ -49,6 +49,9 @@
       [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       class="relative"
+      type="button"
+      aria-label="{{ isShuffle() ? 'Disable' : 'Enable' }} shuffle"
+      title="Shuffle"
     >
       <i
         class="pi pi-arrow-right-arrow-left"
@@ -63,6 +66,9 @@
       [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       (click)="playlistPlayer.playPreviousMusic()"
+      type="button"
+      aria-label="Previous track"
+      title="Previous"
     >
       <i class="pi pi-step-backward"></i>
     </button>
@@ -72,6 +78,9 @@
         [disabled]="disableReproductionControls()"
         [ngClass]="[buttonClass, mainButtonClass]"
         (click)="musicPlayer.playMusic()"
+        type="button"
+        aria-label="Play"
+        title="Play"
       >
         <i class="pi pi-play-circle"></i>
       </button>
@@ -80,6 +89,9 @@
         [disabled]="disableReproductionControls()"
         [ngClass]="[buttonClass, mainButtonClass]"
         (click)="musicPlayer.pauseMusic()"
+        type="button"
+        aria-label="Pause"
+        title="Pause"
       >
         <i class="pi pi-pause-circle"></i>
       </button>
@@ -89,6 +101,9 @@
       [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       (click)="playlistPlayer.playNextMusic()"
+      type="button"
+      aria-label="Next track"
+      title="Next"
     >
       <i class="pi pi-step-forward"></i>
     </button>
@@ -97,6 +112,15 @@
       [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
       class="relative"
+      type="button"
+      [attr.aria-label]="
+        repeatMode() === 'one'
+          ? 'Repeat one on'
+          : repeatMode() === 'all'
+            ? 'Repeat all on'
+            : 'Repeat off'
+      "
+      title="Repeat"
     >
       <i
         class="pi pi-replay"
@@ -119,6 +143,7 @@
       [max]="duration()"
       [value]="currentTime().currentTime"
       [disabled]="disableReproductionControls()"
+      label="Seek bar"
       (dragStarted)="musicPlayer.beginScrub()"
       (dragEnded)="musicPlayer.endScrub($event)"
       (valueChanged)="musicPlayer.changeCurrentTime($event)"
@@ -161,6 +186,9 @@
     [disabled]="disableReproductionControls()"
     [ngClass]="[buttonClass]"
     class="relative"
+    type="button"
+    [attr.aria-label]="volume() === 0 ? 'Unmute' : 'Mute'"
+    title="{{ volume() === 0 ? 'Unmute' : 'Mute' }}"
     (click)="musicPlayer.toggleMute()"
   >
     <i [ngClass]="[volumeIcon()]"></i>
@@ -171,6 +199,7 @@
     [value]="volume()"
     [step]="0.1"
     [disabled]="disableReproductionControls()"
+    label="Volume"
     class="w-20!"
     (valueChanged)="musicPlayer.changeVolume($event)"
   ></app-slider-controller>

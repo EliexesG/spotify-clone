@@ -8,14 +8,20 @@
       ><i class="pi pi-ellipsis-h"></i
     ></span>
     <button
-      class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight)"
+      type="button"
+      class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight) border-none outline-none bg-transparent"
       (click)="back()"
+      aria-label="Go back"
+      title="Go back"
     >
       <i class="pi pi-chevron-left"></i>
     </button>
     <button
-      class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight)"
+      type="button"
+      class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--highlight) border-none outline-none bg-transparent"
       (click)="forward()"
+      aria-label="Go forward"
+      title="Go forward"
     >
       <i class="pi pi-chevron-right"></i>
     </button>
@@ -24,8 +30,11 @@
   <!-- * Center cluster: home circle (functional) + search pill (visual-only) -->
   <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
     <button
+      type="button"
       class="w-10 h-10 rounded-full bg-(--highlight) flex items-center justify-center text-white hover:bg-white/20 transition-colors"
       (click)="goHome()"
+      aria-label="Go home"
+      title="Home"
     >
       <i class="pi pi-home"></i>
     </button>
