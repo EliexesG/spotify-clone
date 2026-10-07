@@ -45,6 +45,8 @@ export class ReproductionController {
   durationString = this.musicPlayer.durationString;
   /** Shuffle toggle */
   isShuffle = this.playlistPlayer.isShuffle;
+  /** Repeat policy of the loaded queue */
+  repeatMode = this.playlistPlayer.repeatMode;
   //#endregion
 
   //#endregion
@@ -70,4 +72,7 @@ export class ReproductionController {
       return 'pi pi-volume-up';
     }
   });
+
+  /** Whether any repeat mode is engaged (green icon state) */
+  isRepeatActive = computed(() => this.repeatMode() !== 'off');
 }

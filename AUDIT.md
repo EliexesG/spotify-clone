@@ -11,7 +11,7 @@
 |---|---|---|
 | Dead code / unused | 0 — ✅ **cleaned (D)** | verified deletions; two entries became obsolete via G (routing, `big`) |
 | Finished | 15 | Playback stack (transport/shuffle/auto-advance/silent scrub), library sidebar + search, routing + home grid + playlist song-list view, now-playing panel, top bar w/ live nav cluster |
-| Half-done / incomplete | 6 open (of 13 listed) | repeat modes; mute; decorative transport icons; search empty-state; volume never disabled |
+| Half-done / incomplete | 3 open (of 13 listed) | decorative transport icons; `alreadyPlayedMusicIndexes` unused; search empty-state |
 | Excluded by owner scope | — | **no CRUD/API/persistence/likes/queue-reorder** — visual clone with minimal real playback only (see ⚠) |
 | Remaining open (non-scope) | 6 | shortcuts, media-session, a11y pass, error/buffering UI, responsive pass, autoplay policy |
 | Risks / bugs | 17 (14 + 3 scrub round) | all ✅ fixed + verified |
@@ -39,14 +39,11 @@
 
 ## B. Half-done / incomplete ◐
 
-> 7 of 13 items resolved during the G round; 6 remain open. (Resolved: 1 now-playing panel, 2 main content, 3 header, 7 `big` variant, 8 color inputs, 12 test coverage, 13 README.)
+> 10 of 13 items resolved (G round: 1 now-playing panel, 2 main content, 3 header, 7 `big` variant, 8 color inputs, 12 test coverage, 13 README; volume round: 5 mute, 11 volume-disabled; repeat round: 4 repeat modes).
 
-4. **Repeat modes** — only a restart button (seek-to-0); no off/all/one modes (`reproduction-controller.html` replay button).
-5. **Mute** — volume icon is reactive but not clickable (`reproduction-controller.html` volume cluster).
 6. **Decorative icon cluster** — mobile/mic/bars/headphones/maximize/expand and minus/plus-circle icons render but are plain `<i>`, no handlers/semantics (`reproduction-controller.html:19-20,99-113`).
 9. **`alreadyPlayedMusicIndexes`** — maintained by shuffle, exposed but never consumed by UI (`playlist-player.ts`).
 10. **Search UX (sidebar)** — no empty-result state, no result count, no persisted query (`library-section.ts`); playlist-view shares the same (filter works, empty state absent).
-11. **Volume slider never disabled** even with no source loaded; transport disabled logic exists only for it (`reproduction-controller.html`).
 
 ## C. Excluded by owner scope + remaining open items
 
@@ -152,6 +149,8 @@
 - **Searcher generalization** — `search-button` shared by sidebar + playlist action-row; playlist play button stateful.
 - **Docs round** — JSDoc/template-marker sweep applied codebase-wide; `HomeView` deferred-import dangling bug caught + fixed.
 - **Image-fallback round (owner request)** — the 4 hand-rolled error patterns (SourceCard ×3, ReproductionController, NowPlayingSection, playlist-view crude `hidden`) consolidated into `components/ui/image-fallback/`; consumers drop their own signals/effects; verified: 6 covers normal + all placeholders on blocked CDN + no stale fallback on src change; AGENTS gained the "never hand-roll (error)" rule.
+- **Mute round (owner request, B5+B11)** — `MusicPlayer.toggleMute()` stores the last audible volume and restores it on un-mute; the volume icon became a real button bound to it and the volume slider gained `[disabled]="disableReproductionControls()"` (mirrors the seek bar; the bootstrap default source means it only engages after a source is cleared). Verified live: 0.5→0→0.5 with icon off/up and slider sync.
+- **Repeat round (owner request, B4)** — `PlaylistPlayer` gains `RepeatMode` (`'off' | 'all' | 'one'`) + cycling `toggleRepeat()`; the `audioEnded` auto-advance honors it (`one` → restart, `off` + queue ended → stop instead of wrap, `all`/manual → wrap as before); the transport restart button became the repeat button with Spotify's active styling (green icon + dot for `all`, green "1" dot for `one`); 5 new deterministic specs (22/22) with the UI cycle live-verified.
 
 ## Suggested build order (needs owner prioritization)
 

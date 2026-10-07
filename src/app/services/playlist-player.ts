@@ -12,6 +12,9 @@ import { MusicPlayer } from './music-player';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AudioResolver } from './audio-resolver';
 
+/** Repeat policies for queue auto-advance */
+export type RepeatMode = 'off' | 'all' | 'one';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -34,6 +37,8 @@ export class PlaylistPlayer {
   private readonly _alreadyPlayedMusicIndexes = signal<number[]>([]);
   /** Shuffle toggle */
   private readonly _isShuffle = signal(false);
+  /** Repeat policy applied on queue auto-advance */
+  private readonly _repeatMode = signal<RepeatMode>('off');
 
   //#region Computed
   /** Index of the current track within the loaded playlist (0 when unknown) */
@@ -70,6 +75,11 @@ export class PlaylistPlayer {
   get isShuffle(): Signal<boolean> {
     return this._isShuffle.asReadonly();
   }
+
+  /** Readonly repeat policy */
+  get repeatMode(): Signal<RepeatMode> {
+    return this._repeatMode.asReadonly();
+  }
   //#endregion
 
   /**
@@ -85,7 +95,12 @@ export class PlaylistPlayer {
     this._audioResolver.audioEnded
       .pipe(takeUntilDestroyed(this.destroy$))
       .subscribe(() => {
-        if (this._playlistSource()) this.playNextMusic();
+        // * Repeat one: replay the current track instead of advancing
+        if (this._repeatMode() === 'one') {
+          this._musicPlayer.restartMusic();
+        } else if (this._playlistSource()) {
+          this.playNextMusic(true);
+        }
       });
 
     // * For reproduction in case it was triggered somewhere else
@@ -103,13 +118,34 @@ export class PlaylistPlayer {
    * This function changes the current music source to the next music in the
    * playlist. If the playlist is shuffled, it picks a random music ID from the
    * list of music IDs that have not been played yet. If the playlist is not
-   * shuffled, it plays the next music in the list of music IDs.
+   * shuffled, it plays the next music in the list of music IDs. Manual calls
+   * wrap around the queue; automatic (end-of-track) calls honor the repeat
+   * mode and stop instead of advancing when repeat is off and the queue is done.
    *
    * If the playlist is empty, it does nothing.
+   *
+   * @param auto - Whether the advance was triggered by the track ending
+   *               (repeat-mode policy), as opposed to a manual user click.
    */
-  playNextMusic() {
+  playNextMusic(auto = false) {
+    const playlist = this.playlistSource()?.music;
+
+    if (!playlist?.length) return;
+
+    // * Auto-advance with repeat off: queue finished → stop, don't wrap
+    if (auto && this.repeatMode() === 'off') {
+      const queueEnded = this.isShuffle()
+        ? this._alreadyPlayedMusicIndexes().length >= playlist.length
+        : this.currentMusicIndex() >= playlist.length - 1;
+
+      if (queueEnded) {
+        this._musicPlayer.stopMusic();
+        return;
+      }
+    }
+
     this._musicPlayer.changeMusicSource(
-      this.playlistSource()?.music[this.calculateNextMusicIndex()] || null,
+      playlist[this.calculateNextMusicIndex()] || null,
     );
 
     this._musicPlayer.playMusic();
@@ -214,6 +250,20 @@ export class PlaylistPlayer {
    */
   toggleShuffle() {
     this._isShuffle.update((value) => !value);
+  }
+
+  /**
+   * Cycles the repeat mode: off → all → one → off.
+   *
+   * This function advances the internal repeat-mode signal one step in the
+   * cycle each time it is called.
+   */
+  toggleRepeat() {
+    const cycle: RepeatMode[] = ['off', 'all', 'one'];
+
+    this._repeatMode.set(
+      cycle[(cycle.indexOf(this._repeatMode()) + 1) % cycle.length],
+    );
   }
 
   /**

@@ -30,6 +30,9 @@ export class MusicPlayer {
   /** The track backing the loaded audio element (null when cleared) */
   private readonly _musicSource = signal<MusicSource | null>(null);
 
+  /** Volume to restore when un-muting (keeps the last audible level) */
+  private readonly _lastAudibleVolume = signal(0.5);
+
   //#region Computed
   /** Track total length, formatted as mm:ss */
   durationString = computed(() => {
@@ -105,6 +108,21 @@ export class MusicPlayer {
    */
   changeVolume(volume: number) {
     this._audioResolver.changeAudioVolume(volume);
+  }
+
+  /**
+   * Toggles mute: stores the current volume (if audible) and silences
+   * the output; a second call restores the last audible level.
+   *
+   * @throws {Error} when the stored restore volume is out of range (from AudioResolver)
+   */
+  toggleMute() {
+    if (this.volume() > 0) {
+      this._lastAudibleVolume.set(this.volume());
+      this._audioResolver.changeAudioVolume(0);
+    } else {
+      this._audioResolver.changeAudioVolume(this._lastAudibleVolume() || 0.5);
+    }
   }
 
   /**

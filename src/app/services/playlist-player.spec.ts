@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { PlaylistPlayer } from './playlist-player';
 import { MusicPlayer } from './music-player';
+import { AudioResolver } from './audio-resolver';
 import { PlaylistSource } from '../interfaces/playlist-source';
 import { MusicSource } from '../interfaces/music-source';
 
@@ -113,5 +114,72 @@ describe('PlaylistPlayer', () => {
     expect(musicPlayer.musicSource()).toBeNull();
     expect(musicPlayer.isMusicPlaying()).toBe(false);
     expect(musicPlayer.duration()).toBe(0);
+  });
+
+  describe('repeat modes', () => {
+    /** Fires the resolver's `ended` event as a real track end would */
+    const endTrack = async () => {
+      const audio = (TestBed.inject(AudioResolver) as any)._audio.getValue();
+      audio.dispatchEvent(new Event('ended'));
+      // * Flush the zoneless scheduler (effects) via a macrotask
+      await new Promise((r) => setTimeout(r, 0));
+    };
+
+    it('cycles off → all → one → off', () => {
+      expect(player.repeatMode()).toBe('off');
+
+      player.toggleRepeat();
+      expect(player.repeatMode()).toBe('all');
+
+      player.toggleRepeat();
+      expect(player.repeatMode()).toBe('one');
+
+      player.toggleRepeat();
+      expect(player.repeatMode()).toBe('off');
+    });
+
+    it('auto-advances with repeat off and stops at the end of the queue', async () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false, 'b');
+      musicPlayer.playMusic();
+
+      await endTrack();
+
+      // * No wrap: the last track stays loaded and playback stops
+      expect(musicPlayer.musicSource()?.id).toBe('b');
+      expect(musicPlayer.isMusicPlaying()).toBe(false);
+    });
+
+    it('auto-advances with repeat all and wraps to the first track', async () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false, 'b');
+      player.toggleRepeat(); // off → all
+      musicPlayer.playMusic();
+
+      await endTrack();
+
+      expect(musicPlayer.musicSource()?.id).toBe('a');
+      expect(musicPlayer.isMusicPlaying()).toBe(true);
+    });
+
+    it('replays the current track with repeat one', async () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false, 'b');
+      player.toggleRepeat(); // off → all
+      player.toggleRepeat(); // all → one
+      musicPlayer.playMusic();
+
+      const spy = vi.spyOn(musicPlayer, 'restartMusic');
+
+      await endTrack();
+
+      expect(musicPlayer.musicSource()?.id).toBe('b');
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('still wraps on manual next when repeat is off', () => {
+      player.changePlaylistSource(fakePlaylist(['a', 'b']), false, 'b');
+
+      player.playNextMusic(); // manual: no repeat policy
+
+      expect(musicPlayer.musicSource()?.id).toBe('a');
+    });
   });
 });

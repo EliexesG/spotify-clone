@@ -4,7 +4,10 @@
   "text-white disabled:text-gray-500 transition-all cursor-pointer hover:scale-110 " +
   "disabled:cursor-not-allowed disabled:scale-100 border-none outline-none bg-transparent";
 @let activeButtonClass =
-  "bg-(--primary) w-[5px] h-[5px] rounded-full absolute bottom-[-5px] right-[50%] translate-[50%]";
+  "bg-(--primary) w-[5px] h-[5px] rounded-full absolute bottom-[-6px] right-[50%] translate-[50%]";
+@let oneBadgeClass =
+  "bg-(--primary) w-2.5 h-2.5 rounded-full absolute bottom-[-6px] right-[50%] translate-[50%] " +
+  "text-black text-[8px] font-bold flex items-center justify-center leading-none";
 
 <!-- * Current track (cover w/ fallback + +/- actions, visual only) -->
 <section class="flex items-center gap-3 justify-start w-80">
@@ -78,11 +81,22 @@
       <i class="pi pi-step-forward"></i>
     </button>
     <button
+      (click)="playlistPlayer.toggleRepeat()"
       [disabled]="disablePlaylistControls()"
       [ngClass]="[buttonClass]"
-      (click)="musicPlayer.restartMusic()"
+      class="relative"
     >
-      <i class="pi pi-replay"></i>
+      <i
+        class="pi pi-replay"
+        [ngClass]="{ 'text-(--primary)': isRepeatActive() }"
+      ></i>
+
+      @if (repeatMode() === "all") {
+        <div [ngClass]="[activeButtonClass]"></div>
+      } @else if (repeatMode() === "one") {
+        <!-- * Repeat one: Spotify shows a small "1" dot instead of the plain dot -->
+        <div [ngClass]="[oneBadgeClass]">1</div>
+      }
     </button>
   </div>
   <div class="flex items-center gap-4 justify-center w-full">
@@ -107,12 +121,20 @@
   <i [ngClass]="['pi pi-microphone', buttonClass]"></i>
   <i [ngClass]="['pi pi-bars', buttonClass]"></i>
   <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
-  <i [ngClass]="[volumeIcon(), buttonClass]"></i>
+  <button
+    [disabled]="disableReproductionControls()"
+    [ngClass]="[buttonClass]"
+    class="relative"
+    (click)="musicPlayer.toggleMute()"
+  >
+    <i [ngClass]="[volumeIcon()]"></i>
+  </button>
   <app-slider-controller
     [min]="0"
     [max]="1"
     [value]="volume()"
     [step]="0.1"
+    [disabled]="disableReproductionControls()"
     class="w-20!"
     (valueChanged)="musicPlayer.changeVolume($event)"
   ></app-slider-controller>
