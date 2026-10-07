@@ -1,22 +1,22 @@
 <section
   class="flex flex-col w-full h-full rounded-2xl bg-(--secondary) p-3 overflow-y-auto transition-all!"
-  [ngClass]="{ 'min-w-125': expanded() }"
+  [ngClass]="{ 'w-80': open() }"
 >
   <!-- * Library Header -->
   <section
-    (click)="toggleExpanded()"
+    (click)="toggleOpen()"
     class="flex items-center justify-start w-full h-10 shadow ps-2 cursor-pointer"
-    [ngClass]="{ 'justify-center! ps-0!': !expanded() }"
+    [ngClass]="{ 'justify-center! ps-0!': !open() }"
   >
     <i class="text-white pi pi-bars"></i>
 
-    @if (expanded()) {
+    @if (open()) {
       <p class="font-bold ms-2 text-white">Your library</p>
     }
   </section>
 
   <!-- * Library Searcher -->
-  @if (expanded()) {
+  @if (open()) {
     <section class="w-fit p-2">
       <app-search-button
         placeholder="Search in your library"
@@ -30,7 +30,7 @@
     @for (playlist of filteredPlaylists(); track $index) {
       <app-source-card
         [source]="playlist"
-        [variant]="expanded() ? 'with-description' : 'only-img'"
+        [variant]="open() ? 'with-description' : 'only-img'"
       ></app-source-card>
     } @empty {
       <!-- * No matching playlists (search empty state) -->

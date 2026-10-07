@@ -34,7 +34,5 @@ export class PlaybackFeedback {
 
   // * Computed
   /** Show the "Buffering…" pill: stalled without active reproduction */
-  showBuffering = computed(
-    () => this.buffering() && !this.reproducing(),
-  );
+  showBuffering = computed(() => this.buffering() && !this.reproducing());
 }

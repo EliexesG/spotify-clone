@@ -1,21 +1,29 @@
-<div class="w-full h-screen flex flex-col">
+<div class="w-full h-screen flex flex-col min-w-202.5">
   <!-- * Top Bar (visual-only chrome) -->
   <app-top-bar></app-top-bar>
   <main class="w-full! grow flex flex-col p-2 gap-2 overflow-hidden min-h-0">
     <div class="w-full! grow flex gap-2 overflow-hidden min-h-0">
-      <!-- * Library Section -->
-      <aside class="w-fit">
-        <app-library-section></app-library-section>
+      <!-- * Library Section (open list or icon rail; shell arbitrates) -->
+      <aside class="shrink-0">
+        <app-library-section
+          [open]="libraryOpen()"
+          (openChange)="setLibraryOpen($event)"
+        ></app-library-section>
       </aside>
-      <!-- * Main Content Section -->
+
+      <!-- * Main Content Section (official: the center never shrinks) -->
       <section
-        class="grow rounded-2xl bg-(--secondary) overflow-y-auto min-w-0"
+        class="grow rounded-2xl bg-(--secondary) overflow-y-auto min-w-100"
       >
         <router-outlet></router-outlet>
       </section>
-      <!-- * Now Playing Section -->
-      <aside class="w-80 shrink-0">
-        <app-now-playing-section></app-now-playing-section>
+
+      <!-- * Now Playing Section (open panel or collapsed sliver, inside component) -->
+      <aside class="shrink-0" [class]="nowPlayingOpen() ? 'w-80' : 'w-11'">
+        <app-now-playing-section
+          [open]="nowPlayingOpen()"
+          (openChange)="setNowPlayingOpen($event)"
+        />
       </aside>
     </div>
 

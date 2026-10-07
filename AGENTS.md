@@ -44,3 +44,4 @@
 - SSR was removed entirely (files, deps, scripts, hydration) — don't reintroduce `main.server.ts`/`@angular/ssr` unless intended; re-enable path is `ng add @angular/ssr`.
 - **Never stop/kill a running dev server** — the owner runs `npm run dev` themselves and restarting it constantly is disruptive. Start one only if none is up; leave whatever is listening alone.
 - Branches: default branch `main`; active development happens on `dev`.
+- Responsive model = official web-player parity: fixed desktop layout with a **`min-w-[810px]` shell floor** (`scaffold`) and horizontal scrolling below it — measured official behavior (no breakpoints, no mobile refit). Don't add stacking/mobile layouts unless the owner asks; when shrinking, trim content (`min-w-0`, `truncate`, `hidden xl:block` decor) instead of changing pane structure.

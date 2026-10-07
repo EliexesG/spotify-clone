@@ -1,34 +1,61 @@
-<section
-  class="flex flex-col w-full h-full rounded-2xl bg-(--secondary) p-3 overflow-y-auto transition-all!"
->
-  <!-- * Panel header (current playlist / queue name) -->
-  <header class="flex items-center justify-between h-10 ps-2 shrink-0">
-    <p class="font-bold m-0 truncate">{{ header() }}</p>
-    <i class="pi pi-times cursor-pointer text-(--muted) hover:text-white"></i>
-  </header>
+@if (open()) {
+  <section
+    class="flex flex-col w-full h-full rounded-2xl bg-(--secondary) p-3 overflow-y-auto transition-all!"
+  >
+    <!-- * Panel header (current playlist / queue name) + functional close -->
+    <header class="flex items-center justify-between h-10 ps-2 shrink-0">
+      <p class="font-bold m-0 truncate">{{ header() }}</p>
+      <button
+        class="border-none outline-none bg-transparent cursor-pointer text-(--muted) hover:text-white"
+        aria-label="Close now playing panel"
+        title="Close"
+        (click)="toggleOpen()"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </header>
 
-  @if (track(); as t) {
-    <!-- * Current track: big cover (shared component) + title + artist -->
-    <div class="relative w-full aspect-square rounded-md overflow-hidden mt-2">
-      <app-image-fallback [src]="img()" alt="Current track cover" />
-    </div>
-    <p class="font-bold mt-4 mb-1 wrap-break-word">{{ t.title }}</p>
-    <p class="text-(--muted) m-0">{{ t.artist }}</p>
+    @if (track(); as t) {
+      <!-- * Current track: big cover (shared component) + title + artist -->
+      <div
+        class="relative w-full aspect-square rounded-md overflow-hidden mt-2"
+      >
+        <app-image-fallback [src]="img()" alt="Current track cover" />
+      </div>
+      <p class="font-bold mt-4 mb-1 wrap-break-word">{{ t.title }}</p>
+      <p class="text-(--muted) m-0">{{ t.artist }}</p>
 
-    @if (nextTrack(); as next) {
-      <!-- * Next in queue (official compact preview, SourceCard row) -->
-      <div class="mt-auto flex flex-col gap-2">
-        <p class="text-(--muted) font-bold mt-2 mb-0 truncate">Next in queue</p>
-        <app-source-card [source]="next" variant="with-description" />
+      @if (nextTrack(); as next) {
+        <!-- * Next in queue (official compact preview, SourceCard row) -->
+        <div class="mt-auto flex flex-col gap-2">
+          <p class="text-(--muted) font-bold mt-2 mb-0 truncate">
+            Next in queue
+          </p>
+          <app-source-card [source]="next" variant="with-description" />
+        </div>
+      }
+    } @else {
+      <!-- * Nothing loaded: empty state (official "Find something to play") -->
+      <div
+        class="flex-1 flex flex-col items-center justify-center gap-3 text-(--muted)"
+      >
+        <i class="pi pi-headphones text-2xl"></i>
+        <p class="m-0">Find something to play</p>
       </div>
     }
-  } @else {
-    <!-- * Nothing loaded: empty state (official "Find something to play") -->
-    <div
-      class="flex-1 flex flex-col items-center justify-center gap-3 text-(--muted)"
+  </section>
+} @else {
+  <!-- * Collapsed sliver (official small reference): reopen chevron only -->
+  <aside
+    class="w-11 h-full rounded-2xl bg-(--secondary) flex items-center justify-center"
+  >
+    <button
+      class="w-8 h-8 rounded-full border-none outline-none bg-transparent cursor-pointer text-(--muted) hover:text-white flex items-center justify-center"
+      aria-label="Open now playing panel"
+      title="Now playing view"
+      (click)="toggleOpen()"
     >
-      <i class="pi pi-headphones text-2xl"></i>
-      <p class="m-0">Find something to play</p>
-    </div>
-  }
-</section>
+      <i class="pi pi-chevron-left"></i>
+    </button>
+  </aside>
+}

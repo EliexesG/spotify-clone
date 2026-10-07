@@ -5,10 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { KeyboardShortcuts } from '../../../services/keyboard-shortcuts';
-import {
-  ShortcutEntry,
-  ShortcutGroup,
-} from './shortcuts-overlay.model';
+import { ShortcutEntry, ShortcutGroup } from './shortcuts-overlay.model';
 
 /**
  * Keyboard-shortcut overlay (official parity): centered dark modal listing

@@ -10,7 +10,7 @@
   "text-black text-[8px] font-bold flex items-center justify-center leading-none";
 
 <!-- * Current track (cover w/ fallback + +/- actions, visual only) -->
-<section class="flex items-center gap-3 justify-start w-80">
+<section class="flex items-center gap-3 justify-start w-80 min-w-0 shrink">
   <!-- * Music Displayer -->
   @let musicSource = this.musicSource();
 
@@ -21,8 +21,10 @@
       class="w-16 h-16 rounded shrink-0"
     />
     <div>
-      <p class="font-bold text-sm">{{ musicSource.title }}</p>
-      <p class="font-light text-(--muted) text-xs">{{ musicSource.artist }}</p>
+      <p class="font-bold text-sm truncate">{{ musicSource.title }}</p>
+      <p class="font-light text-(--muted) text-xs truncate">
+        {{ musicSource.artist }}
+      </p>
     </div>
     <i
       class="pi pi-minus-circle"
@@ -125,31 +127,31 @@
   </div>
 </section>
 
-<!-- * Volume and Settings (visual chrome: tooltips only, no actions by scope) -->
-<section class="flex justify-end items-center gap-4 w-96">
+<!-- * Volume and Settings (visual chrome: tooltips only, no actions by scope; decor icons yield first as width tightens) -->
+<section class="flex justify-end items-center gap-4 w-96 min-w-0">
   <i
-    class="pi pi-mobile"
+    class="pi pi-mobile hidden xl:block"
     [ngClass]="[buttonClass]"
     role="img"
     aria-label="Connect to a device"
     title="Connect to a device"
   ></i>
   <i
-    class="pi pi-microphone"
+    class="pi pi-microphone hidden xl:block"
     [ngClass]="[buttonClass]"
     role="img"
     aria-label="Lyrics"
     title="Lyrics"
   ></i>
   <i
-    class="pi pi-bars"
+    class="pi pi-bars hidden xl:block"
     [ngClass]="[buttonClass]"
     role="img"
     aria-label="Playing queue"
     title="Playing queue"
   ></i>
   <i
-    class="pi pi-headphones"
+    class="pi pi-headphones hidden xl:block"
     [ngClass]="[buttonClass]"
     role="img"
     aria-label="Group session"

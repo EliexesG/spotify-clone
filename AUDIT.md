@@ -13,7 +13,7 @@
 | Finished | 19 | Playback stack (transport/shuffle/repeat/auto-advance/silent scrub/mute), library sidebar + search + empty-states, routing + home grid + playlist song-list view, now-playing panel + next-in-queue, top bar w/ live nav cluster + shortcuts trigger, keyboard shortcuts, Media Session, error/buffering toast, shortcuts overlay |
 | Half-done / incomplete | 0 open (13 of 13 resolved) | all §B items resolved |
 | Excluded by owner scope | — | **no CRUD/API/persistence/likes/queue-reorder** — visual clone with minimal real playback only (see ⚠) |
-| Remaining open (non-scope) | 3 | a11y pass, responsive pass, autoplay policy ADR |
+| Remaining open (non-scope) | 2 | a11y pass, README interactions map |
 | Risks / bugs | 17 (14 + 3 scrub round) | all ✅ fixed + verified |
 
 ## A. Finished ✔
@@ -42,6 +42,7 @@
 - **Shortcuts overlay** — `components/ui/shortcuts-overlay/` official-style centered modal (keycap chips, 4 groups / 12 rows, `shortcuts-overlay.model.ts` = display source of truth); opens with `?` or the top-bar "?" trigger, closes with Escape/backdrop, playback shortcuts suspended while open
 - **Search empty-states** — `@empty` "Couldn't find "X"" in library sidebar + playlist track loop (`library-section.html`, `playlist-view.html`)
 - **Shared cover component (`ImageFallback`)** — single error-fallback owner for all covers (sidebar rows, grid, transport bar, now-playing panel, playlist header + table rows); consumers only size it (`image-fallback.*`)
+- **Responsive pass** — official-parity desktop floor: research measured the real web player has NO breakpoints (fixed ~810px layout, horizontal scroll below, no mobile refit); `scaffold` shell carries `min-w-[810px]`, transport left/right sections shrink with `min-w-0` + truncate, far-right decorative icons hide below `xl:`, home grid auto-fill + playlist `md:` header breakpoints unchanged (`scaffold.html`, `reproduction-controller.html`)
 - **Build/test infra** — Angular 22.2 zoneless, TypeScript 6, Vitest unit tests (**27 specs / 3 files**), budgets enforced
 
 ## B. Half-done / incomplete ◐
@@ -55,8 +56,7 @@
 **Remaining genuinely open (players/cosmetics only):**
 
 - **Accessibility pass** — global `:focus-visible` ring landed (E13); still no aria/roles/tabindex/keyboard handlers; interactive divs unreachable by keyboard *(code-verified, grep 0 hits)*
-- **Responsive pass** — playlist-view gained `md:` header breakpoints + auto-fill grids; core scaffold stays fixed-width (`w-80/w-96`, `min-w-[500px]`); no true mobile pass *(partially started)*
-- **Autoplay/repeat policy ADR** — record the coding policy as-is (load-without-play defaults, repeat `off`, shuffle `off`); §B reference implementations fully cover the behavior itself
+- **Interactions map (README)** — every real interaction (mouse/keyboard/OS-media-session) documented in README.md at the end; owner-requested format *(pending — doc-only)*
 
 ## D. Dead code — ✅ cleaned 2026-10-06 (historical proof)
 
@@ -154,6 +154,7 @@
 - **Parity round (owner request, B10+B6+B9)** — search empty-states land in both views (`@empty` + "Couldn't find "X"", live-verified with 0 cards); the "Next in queue" compact preview lands in `NowPlayingSection` (official app parity, owner-approved): `PlaylistPlayer.nextMusic` computed exposes the sequential next under non-shuffle, the row hides under shuffle/at queue end (random can't be predicted), and it reuses the generic `SourceCard` (`open()` gained the music path — jump-and-play — its first real music consumer, so the hand-rolled duplicate row was deleted instead of grown); decorative transport icons gained honest chrome semantics (`role="img"` + `aria-label` + `title`, still no actions by scope); `alreadyPlayedMusicIndexes` public getter removed, add/remove helpers privatized (internal shuffle bookkeeping only). Live-verified all four surfaces; build green; 22/22.
 - **Shortcuts/media-session/feedback round (owner request, 3 §C items)** — `KeyboardShortcuts` service (Scaffold-instantiated; text inputs yield; clamped seek/volume), Media Session mirrored from `PlaylistPlayer` (feature-gated, handler-once rule, per-track metadata), `playback-feedback` toast rendered by `Scaffold`; 5 new specs (27/27) + the full key map live-verified, including blocked-route error pill.
 - **Shortcuts-overlay round (owner request, official parity research)** — the official desktop app exposes its binding list through a centered dark modal opened with `Ctrl/Cmd + /` (Shift+`\`/`?` variants, support-article verified); ours: `components/ui/shortcuts-overlay/` (`role="dialog"`, keycap chips styled with tokens, 4 groups / 12 rows mirroring the real map, single display source of truth in `shortcuts-overlay.model.ts`); opens with `?` or the new top-bar "?" trigger button (owner-requested discoverability hint, functional like home/nav), closes with Escape or backdrop click; playback shortcuts suspend while open. Live-verified all five paths (button, `?`, space-suspension, Esc, backdrop).
+- **Responsive round (owner request, official-parity research)** — live-measured the official web player at 7 widths: no breakpoints anywhere; fixed ~810px desktop layout with horizontal scroll below; library/now-playing default widths are fixed, collapse-to-rail is a manual desktop-app toggle. Ours adopts the same model: `min-w-[810px]` shell floor replacing `min-w-[500px]`, transport sections made shrink-safe (`min-w-0` + truncated track title/artist), decorative right-cluster icons `hidden xl:block`. Applied exactly the agreed changes only (owner testing manually).
 
 ## Suggested build order (needs owner prioritization)
 

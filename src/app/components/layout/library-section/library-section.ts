@@ -13,7 +13,10 @@ import { SearchButton } from '../../ui/search-button/search-button';
 
 /**
  * Library sidebar panel: expandable/collapsible card list with a live
- * case-insensitive search filter. Composed by the Scaffold.
+ * case-insensitive search filter. Composed by the Scaffold, which also
+ * arbitrates panel space — the open/closed state is driven through a
+ * two-way model so the shell can auto-collapse it on narrow windows
+ * (same contract as NowPlayingSection.open).
  */
 @Component({
   selector: 'app-library-section',
@@ -33,8 +36,12 @@ export class LibrarySection {
   // * State
   /** Two-way search text bound from the SearchButton */
   textSearch = model('');
-  /** Whether the list is expanded (cards show description) */
-  expanded = signal(true);
+  /**
+   * Whether the panel is open (false = icon rail) — two-way:
+   * the shell (Scaffold) can force it closed via the rail when space runs
+   * out (same contract as NowPlayingSection.open)
+   */
+  open = model(true);
 
   // * Computed
   /** Playlists matching the search text (empty text = all) */
@@ -49,7 +56,7 @@ export class LibrarySection {
   });
 
   /** Collapses/expands the card list */
-  toggleExpanded() {
-    this.expanded.set(!this.expanded());
+  toggleOpen() {
+    this.open.set(!this.open());
   }
 }
