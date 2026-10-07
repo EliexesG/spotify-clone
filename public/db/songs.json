@@ -48,5 +48,15 @@
     "album": "Órbita",
     "dateAdded": "2025-08-21",
     "durationSeconds": 119
+  },
+  {
+    "id": "6",
+    "img": "https://cdn2.suno.ai/image_e2b76573-03c9-4106-8ac1-621d2def8885.jpeg?width=360",
+    "title": "Odio",
+    "artist": "EliexesG",
+    "url": "songs/odio.mp3",
+    "album": "Tú",
+    "dateAdded": "2025-03-14",
+    "durationSeconds": 56
   }
 ]
