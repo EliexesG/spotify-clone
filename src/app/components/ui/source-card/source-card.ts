@@ -46,11 +46,11 @@ export class SourceCard {
   /** Card title (falls back to a placeholder) */
   title = computed(() => this.source()?.title || 'Title');
 
-  /** "Music • artist" / "Playlist • owner" line (kind via type guard) */
+  /** "artist" (music) / "Playlist • owner" line (kind via type guard) */
   subtitle = computed(() => {
     const source = this.source();
 
-    if (this.isMusic(source)) return `Music • ${source.artist}`;
+    if (this.isMusic(source)) return source.artist;
     if (this.isPlaylist(source)) return `Playlist • ${source.owner}`;
 
     return 'Subtitle';
@@ -137,13 +137,19 @@ export class SourceCard {
   }
 
   /**
-   * Opens the source (official-app behavior for library rows):
-   * playlist cards navigate to their detail view and load the queue
-   * without playing; music cards have no detail route (no-op for now).
-   * The cover keeps its dedicated play/pause handling.
+   * Opens the source (official-app behavior for library rows): playlist
+   * cards navigate to their detail view and load the queue without
+   * playing; music cards have no detail route, so the row jumps playback
+   * to that track (queue-row behavior). The cover keeps its dedicated
+   * play/pause handling.
    */
   open() {
     const source = this.source();
+
+    if (this.isMusic(source)) {
+      this.play();
+      return;
+    }
 
     if (!this.isPlaylist(source)) return;
 

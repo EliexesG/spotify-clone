@@ -11,6 +11,7 @@ import { PlaylistSource } from '../interfaces/playlist-source';
 import { MusicPlayer } from './music-player';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AudioResolver } from './audio-resolver';
+import { MusicSource } from '../interfaces/music-source';
 
 /** Repeat policies for queue auto-advance */
 export type RepeatMode = 'off' | 'all' | 'one';
@@ -58,17 +59,25 @@ export class PlaylistPlayer {
 
     return index;
   });
+
+  /**
+   * Sequential next track for the "Next in queue" preview (null when nothing
+   * is loaded, under shuffle — a random pick can't be predicted — or at the
+   * end of the queue).
+   */
+  nextMusic = computed<MusicSource | null>(() => {
+    const playlist = this._playlistSource();
+
+    if (!playlist || this._isShuffle()) return null;
+
+    return playlist.music[this.currentMusicIndex() + 1] || null;
+  });
   //#endregion
 
   //#region Getters
   /** Readonly signal of the loaded playlist */
   get playlistSource(): Signal<PlaylistSource | null> {
     return this._playlistSource.asReadonly();
-  }
-
-  /** Readonly signal of the played indexes of this shuffle round */
-  get alreadyPlayedMusicIndexes(): Signal<number[]> {
-    return this._alreadyPlayedMusicIndexes.asReadonly();
   }
 
   /** Readonly shuffle toggle */
@@ -208,15 +217,15 @@ export class PlaylistPlayer {
   /**
    * Adds the given music index to the list of already played music indexes.
    *
-   * This function appends the provided index to the internal list of already
-   * played music indexes, ensuring that the index is not undefined and not
-   * already present in the list.
+   * Private shuffle-round bookkeeping: appends the provided index to the
+   * internal list of already played music indexes, ensuring that the index
+   * is not undefined and not already present in the list.
    *
    * @param index - The index of the music to be added to the list of already
    *                played music indexes. If undefined or already present, no
    *                changes are made.
    */
-  addMusicToAlreadyPlayed(index: number | undefined) {
+  private addMusicToAlreadyPlayed(index: number | undefined) {
     if (
       index === undefined ||
       this._alreadyPlayedMusicIndexes().includes(index)
@@ -229,14 +238,14 @@ export class PlaylistPlayer {
   /**
    * Removes the given music index from the list of already played music indexes.
    *
-   * This function filters the internal list of already played music indexes to
-   * remove the provided index.
+   * Private shuffle-round bookkeeping: filters the internal list of already
+   * played music indexes to remove the provided index.
    *
    * @param index - The index of the music to be removed from the list of already
    *                played music indexes. If the index is not present, no changes
    *                are made.
    */
-  removeMusicFromAlreadyPlayed(index: number) {
+  private removeMusicFromAlreadyPlayed(index: number) {
     this._alreadyPlayedMusicIndexes.update((value) =>
       value.filter((i) => i !== index),
     );

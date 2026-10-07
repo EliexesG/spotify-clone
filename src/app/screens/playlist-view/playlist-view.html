@@ -124,6 +124,11 @@
             formatTrackDuration(track.durationSeconds)
           }}</span>
         </div>
+      } @empty {
+        <!-- * No matching tracks (search empty state) -->
+        <p class="text-(--muted) text-sm py-6 m-0">
+          Couldn't find "{{ trackFilter().trim() }}"
+        </p>
       }
     </div>
   </section>

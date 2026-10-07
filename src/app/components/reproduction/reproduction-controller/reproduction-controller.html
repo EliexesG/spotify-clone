@@ -24,8 +24,18 @@
       <p class="font-bold text-sm">{{ musicSource.title }}</p>
       <p class="font-light text-(--muted) text-xs">{{ musicSource.artist }}</p>
     </div>
-    <i class="pi pi-minus-circle"></i>
-    <i class="pi pi-plus-circle"></i>
+    <i
+      class="pi pi-minus-circle"
+      role="img"
+      aria-label="Remove from queue"
+      title="Remove from queue"
+    ></i>
+    <i
+      class="pi pi-plus-circle"
+      role="img"
+      aria-label="Save to Your Library"
+      title="Save to Your Library"
+    ></i>
   }
 </section>
 
@@ -115,12 +125,36 @@
   </div>
 </section>
 
-<!-- * Volume and Settings -->
+<!-- * Volume and Settings (visual chrome: tooltips only, no actions by scope) -->
 <section class="flex justify-end items-center gap-4 w-96">
-  <i [ngClass]="['pi pi-mobile', buttonClass]"></i>
-  <i [ngClass]="['pi pi-microphone', buttonClass]"></i>
-  <i [ngClass]="['pi pi-bars', buttonClass]"></i>
-  <i [ngClass]="['pi pi-headphones', buttonClass]"></i>
+  <i
+    class="pi pi-mobile"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Connect to a device"
+    title="Connect to a device"
+  ></i>
+  <i
+    class="pi pi-microphone"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Lyrics"
+    title="Lyrics"
+  ></i>
+  <i
+    class="pi pi-bars"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Playing queue"
+    title="Playing queue"
+  ></i>
+  <i
+    class="pi pi-headphones"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Group session"
+    title="Group session"
+  ></i>
   <button
     [disabled]="disableReproductionControls()"
     [ngClass]="[buttonClass]"
@@ -138,6 +172,18 @@
     class="w-20!"
     (valueChanged)="musicPlayer.changeVolume($event)"
   ></app-slider-controller>
-  <i [ngClass]="['pi pi-window-maximize', buttonClass]"></i>
-  <i [ngClass]="['pi pi-expand', buttonClass]"></i>
+  <i
+    class="pi pi-window-maximize"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Mini player"
+    title="Mini player"
+  ></i>
+  <i
+    class="pi pi-expand"
+    [ngClass]="[buttonClass]"
+    role="img"
+    aria-label="Full screen"
+    title="Full screen"
+  ></i>
 </section>

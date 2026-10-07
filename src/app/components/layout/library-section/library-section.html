@@ -32,6 +32,11 @@
         [source]="playlist"
         [variant]="expanded() ? 'with-description' : 'only-img'"
       ></app-source-card>
+    } @empty {
+      <!-- * No matching playlists (search empty state) -->
+      <p class="text-(--muted) text-sm px-2 py-4 m-0">
+        Couldn't find "{{ textSearch().trim() }}"
+      </p>
     }
   </section>
 </section>
